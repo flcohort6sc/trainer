@@ -968,9 +968,9 @@ a { color: var(--accent); }
 
 :root {
   --figure-ink: var(--text);
-  /* The body is filled, not drawn in outline, so it needs a fill that reads
-     against both the card and the page. */
-  --figure-body: var(--surface-2);
+  /* Lighter than the card it sits on, or the silhouette reads as an outline
+     drawn around nothing rather than as a body with volume. */
+  --figure-body: #39404f;
   --figure-ghost: var(--text-faint);
   /* Working muscles. Warm against a cool interface, and distinguishable from
      the accent so a lit muscle is never mistaken for a control. */

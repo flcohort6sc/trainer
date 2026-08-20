@@ -206,12 +206,24 @@ type Proj = (v: { x: number; y: number; z: number }) => Projected
  */
 const THICK = { thigh: 15, shin: 11, foot: 7, upperArm: 10.5, forearm: 8.5, neck: 9, clav: 8, pelvis: 9 }
 
-interface Piece {
-  key: string
+interface Bone {
+  a: Projected
+  b: Projected
+  width: number
   depth: number
-  render: (opacity: number, scale: number) => React.ReactNode
+  key: string
 }
 
+/**
+ * One body, in three passes.
+ *
+ * Drawing outline-then-fill per limb in depth order looked like a bundle of
+ * pipes: every limb's outline cut across the limb in front of it, so an arm
+ * crossing a chest drew a seam through it. Doing ALL the outlines first and
+ * then ALL the fills merges them into a single silhouette, which is what a
+ * body looks like. Muscles go last, on top of everything, or they end up
+ * buried under the limb they belong to.
+ */
 function Body({
   s, project: p, ghost, muscles = [],
 }: {
@@ -220,112 +232,83 @@ function Body({
   ghost?: boolean
   muscles?: MusclePatch[]
 }) {
-  const ink = ghost ? 'var(--figure-ghost)' : 'var(--figure-body)'
-  const edge = ghost ? 'none' : 'var(--figure-ink)'
-  const pieces: Piece[] = []
+  const fill = ghost ? 'none' : 'var(--figure-body)'
+  const edge = ghost ? 'var(--figure-ghost)' : 'var(--figure-ink)'
 
-  const limb = (
-    a: { x: number; y: number; z: number },
-    b: typeof a,
-    width: number,
-    key: string,
-  ) => {
+  const bones: Bone[] = []
+  const bone = (a: { x: number; y: number; z: number }, b: typeof a, width: number, key: string) => {
     const pa = p(a)
     const pb = p(b)
-    const depth = (pa.depth + pb.depth) / 2
-    pieces.push({
-      key,
-      depth,
-      render: (opacity, scale) => (
-        <g key={key} opacity={opacity}>
-          {!ghost && (
-            <line x1={pa.x} y1={pa.y} x2={pb.x} y2={pb.y}
-              stroke={edge} strokeWidth={width * scale + 2.5} strokeLinecap="round" />
-          )}
-          <line x1={pa.x} y1={pa.y} x2={pb.x} y2={pb.y}
-            stroke={ink} strokeWidth={width * scale} strokeLinecap="round"
-            strokeDasharray={ghost ? '6 6' : undefined} />
-        </g>
-      ),
-    })
+    bones.push({ a: pa, b: pb, width, depth: (pa.depth + pb.depth) / 2, key })
   }
 
-  // The trunk is a shape, not a stick: shoulders and hips are real widths, so
-  // joining the four corners gives a torso that narrows at the waist.
-  const trunk = [s.left.shoulder, s.right.shoulder, s.right.hip, s.left.hip].map(p)
-  const trunkDepth = trunk.reduce((n, q) => n + q.depth, 0) / 4
-  pieces.push({
-    key: 'trunk',
-    depth: trunkDepth,
-    render: (opacity) => (
-      <polygon
-        key="trunk"
-        points={[trunk[0], trunk[1], trunk[2], trunk[3]].map((q) => `${q.x},${q.y}`).join(' ')}
-        fill={ink}
-        stroke={ghost ? 'var(--figure-ghost)' : 'var(--figure-ink)'}
-        strokeWidth={ghost ? 1.5 : 3}
-        strokeLinejoin="round"
-        strokeDasharray={ghost ? '6 6' : undefined}
-        opacity={opacity}
-      />
-    ),
-  })
-
-  limb(s.shoulders, s.neckTop, THICK.neck, 'neck')
+  bone(s.shoulders, s.neckTop, THICK.neck, 'neck')
   for (const [name, side] of [['l', s.left], ['r', s.right]] as const) {
-    limb(side.shoulder, side.elbow, THICK.upperArm, `${name}-uarm`)
-    limb(side.elbow, side.hand, THICK.forearm, `${name}-farm`)
-    limb(side.hip, side.knee, THICK.thigh, `${name}-thigh`)
-    limb(side.knee, side.ankle, THICK.shin, `${name}-shin`)
-    limb(side.ankle, side.toe, THICK.foot, `${name}-foot`)
+    bone(side.shoulder, side.elbow, THICK.upperArm, `${name}-uarm`)
+    bone(side.elbow, side.hand, THICK.forearm, `${name}-farm`)
+    bone(side.hip, side.knee, THICK.thigh, `${name}-thigh`)
+    bone(side.knee, side.ankle, THICK.shin, `${name}-shin`)
+    bone(side.ankle, side.toe, THICK.foot, `${name}-foot`)
   }
+  bones.sort((x, y) => x.depth - y.depth)
 
-  // Muscle patches ride at the same depth as the body they sit on, so a
-  // hamstring is hidden when you look at the figure from the front.
-  for (const [i, m] of muscles.entries()) {
-    const q = p(m.at)
-    pieces.push({
-      key: `m${i}`,
-      // Nudged toward the viewer so a patch is never swallowed by its own limb.
-      depth: q.depth + 3,
-      render: (opacity, scale) => (
-        <circle
-          key={`m${i}`}
-          cx={q.x} cy={q.y} r={m.size * scale}
-          fill={m.primary ? 'var(--muscle-primary)' : 'var(--muscle-secondary)'}
-          opacity={(m.primary ? 0.9 : 0.5) * opacity}
-        />
-      ),
-    })
-  }
-
+  const trunk = [s.left.shoulder, s.right.shoulder, s.right.hip, s.left.hip].map(p)
+  const trunkPoints = trunk.map((q) => `${q.x},${q.y}`).join(' ')
   const head = p(s.head)
-  pieces.push({
-    key: 'head',
-    depth: head.depth,
-    render: (opacity, scale) => (
-      <circle
-        key="head"
-        cx={head.x} cy={head.y} r={SEG.head * 1.15 * scale}
-        fill={ink}
-        stroke={ghost ? 'var(--figure-ghost)' : 'var(--figure-ink)'}
-        strokeWidth={ghost ? 1.5 : 3}
-        strokeDasharray={ghost ? '6 6' : undefined}
-        opacity={opacity}
-      />
-    ),
-  })
+  const headR = SEG.head * 1.15 * (1 + head.depth / 900)
+  const scaleOf = (depth: number) => 1 + depth / 900
 
-  // Painter's algorithm. Without it the far arm draws over the chest and the
-  // whole thing reads flat however far you turn it.
-  pieces.sort((a, b) => a.depth - b.depth)
+  const OUTLINE = ghost ? 1.5 : 3
 
   return (
-    <g opacity={ghost ? 0.45 : 1}>
-      {pieces.map((piece) => {
-        const near = Math.max(0, Math.min(1, (piece.depth + 16) / 32))
-        return piece.render(ghost ? 1 : 0.55 + near * 0.45, 1 + piece.depth / 900)
-      })}
+    <g opacity={ghost ? 0.4 : 1}>
+      {/* 1. the silhouette, drawn wide and merged */}
+      {!ghost && (
+        <g stroke={edge} fill={edge} strokeLinecap="round" strokeLinejoin="round">
+          <polygon points={trunkPoints} strokeWidth={OUTLINE * 2} />
+          <circle cx={head.x} cy={head.y} r={headR + OUTLINE} />
+          {bones.map((b) => (
+            <line key={`o-${b.key}`} x1={b.a.x} y1={b.a.y} x2={b.b.x} y2={b.b.y}
+              strokeWidth={b.width * scaleOf(b.depth) + OUTLINE * 2} />
+          ))}
+        </g>
+      )}
+
+      {/* 2. the body itself, back to front */}
+      <g strokeLinecap="round" strokeLinejoin="round">
+        <polygon points={trunkPoints} fill={fill}
+          stroke={ghost ? edge : 'none'} strokeWidth={OUTLINE} strokeDasharray={ghost ? '6 6' : undefined} />
+        {bones.map((b) => {
+          const near = Math.max(0, Math.min(1, (b.depth + 16) / 32))
+          return (
+            <line key={`f-${b.key}`} x1={b.a.x} y1={b.a.y} x2={b.b.x} y2={b.b.y}
+              stroke={ghost ? edge : fill}
+              strokeWidth={b.width * scaleOf(b.depth)}
+              strokeDasharray={ghost ? '6 6' : undefined}
+              // Far limbs sit back a little without going transparent enough to
+              // show the limb behind them.
+              opacity={ghost ? 1 : 0.82 + near * 0.18} />
+          )
+        })}
+        <circle cx={head.x} cy={head.y} r={headR} fill={fill}
+          stroke={ghost ? edge : 'none'} strokeWidth={OUTLINE} strokeDasharray={ghost ? '6 6' : undefined} />
+      </g>
+
+      {/* 3. the muscles, on top, dimmed when they are round the back */}
+      {!ghost && muscles
+        .map((m) => ({ m, q: p(m.at) }))
+        .sort((x, y) => x.q.depth - y.q.depth)
+        .map(({ m, q }, i) => {
+          const facingUs = Math.max(0, Math.min(1, (q.depth + 14) / 28))
+          return (
+            <circle
+              key={`m${i}`}
+              cx={q.x} cy={q.y} r={m.size * 0.85 * scaleOf(q.depth)}
+              fill={m.primary ? 'var(--muscle-primary)' : 'var(--muscle-secondary)'}
+              opacity={(m.primary ? 0.82 : 0.42) * (0.35 + facingUs * 0.65)}
+            />
+          )
+        })}
     </g>
   )
 }
