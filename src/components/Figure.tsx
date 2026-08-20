@@ -1,268 +1,266 @@
 /**
- * Exercise figures.
+ * Exercise figures: a 3D skeleton you can turn, moving through the actual
+ * repetition.
  *
- * A schematic human drawn from joint angles, not a hand-drawn illustration.
- * That choice is the only reason full-library coverage is possible: a picture
- * per exercise is ~2 lines of pose data instead of an SVG somebody has to
- * draw, and every figure comes out in the same visual language.
+ * The geometry lives in figureGeometry.ts; this file is the picture. Three
+ * things it does that the old flat drawing could not:
  *
- * WHAT THIS IS GOOD FOR: where the limbs go. Start position, end position,
- * which way the movement travels, and the one fault worth marking.
+ *   BOTH SIDES. A lunge has two legs. A single-arm row has an arm doing the
+ *   work and an arm braced. Drawing one of each was why half the library
+ *   looked identical.
  *
- * WHAT IT IS NOT: anatomy. It will not show you what a muscle should feel
- * like, it has no idea about grip width or foot angle, and for swimming or
- * sitting in a sauna it would be actively unhelpful -- those deliberately
- * have no figure rather than a misleading one.
+ *   MOTION. The pose data has always described a start and an end, and the old
+ *   figure showed them stacked on top of each other with an arrow. Playing
+ *   between them is the same information, animated — nothing new is invented,
+ *   it is the same two poses with time in between.
  *
- * Geometry: forward kinematics from the pelvis. Angles are degrees, screen
- * coordinates (y grows downward), and -90 points up. Every joint angle is
- * relative to its parent segment, so `knee: 90` means "bent to a right angle"
- * regardless of what the hip is doing.
+ *   DEPTH. Turn it. Far limbs go thinner and dimmer, near ones bigger. A
+ *   Pallof press is unreadable side-on and obvious at 40 degrees.
+ *
+ * Motion respects prefers-reduced-motion: it starts paused there, showing the
+ * start-and-end overlay the old figure drew, which is still perfectly good.
  */
 
-export type FigureBase = 'standing' | 'supine' | 'prone' | 'seated' | 'hanging'
+import { useEffect, useRef, useState } from 'react'
+import {
+  applyBase, build, lerpPose, project, SEG,
+  type Pose, type Projected, type Skeleton,
+} from './figureGeometry'
+
+export type { FigureBase, Pose } from './figureGeometry'
 
 export type FigureProp =
   | 'barbell' | 'dumbbell' | 'kettlebell' | 'bench' | 'box' | 'wall' | 'bar' | 'band' | 'floor'
 
-export interface Pose {
-  base?: FigureBase
-  /** Torso lean from vertical. Positive leans forward (to the right). */
-  torso?: number
-  /** Hip flexion. 0 = straight line torso to thigh. */
-  hip?: number
-  /** Knee flexion. 0 = straight leg. */
-  knee?: number
-  /** Ankle. 0 = foot flat and forward relative to the shin. */
-  ankle?: number
-  /** Shoulder flexion from the torso axis. 0 = arms down, 180 = overhead. */
-  shoulder?: number
-  /** Elbow flexion. 0 = straight arm. */
-  elbow?: number
-  /** Head angle relative to the torso. */
-  neck?: number
-  /** Move the whole figure. Lying and hanging poses need it. */
-  dx?: number
-  dy?: number
-}
-
 export interface FigureSpec {
   start: Pose
   end: Pose
+  /** Where the path is not a straight line between the two — a swing, a clean. */
+  mid?: Pose
   props?: FigureProp[]
   /** The one thing most commonly done wrong. Rendered as a marked note. */
   fault?: string
   /** Overrides the automatic start-to-end arrow. */
   arrow?: 'none' | 'hands' | 'hips' | 'shoulders'
-}
-
-// ---------------------------------------------------------------- geometry
-
-const RAD = Math.PI / 180
-const SEG = { torso: 34, neck: 9, head: 7, upperArm: 18, forearm: 17, thigh: 24, shin: 23, foot: 9 }
-
-interface P { x: number; y: number }
-const step = (from: P, angleDeg: number, len: number): P => ({
-  x: from.x + Math.cos(angleDeg * RAD) * len,
-  y: from.y + Math.sin(angleDeg * RAD) * len,
-})
-
-interface Skeleton {
-  pelvis: P; shoulders: P; head: P; neckTop: P
-  knee: P; ankle: P; toe: P
-  elbow: P; hand: P
-}
-
-const FLOOR_Y = 176
-
-function build(pose: Pose): Skeleton {
-  const { torso = 0, hip = 0, knee = 0, ankle = 0, shoulder = 0, elbow = 0, neck = 0 } = pose
-
-  const pelvis: P = { x: 100 + (pose.dx ?? 0), y: 108 + (pose.dy ?? 0) }
-  const torsoAngle = -90 + torso
-  const shoulders = step(pelvis, torsoAngle, SEG.torso)
-
-  const neckTop = step(shoulders, torsoAngle + neck, SEG.neck)
-  const head = step(neckTop, torsoAngle + neck, SEG.head)
-
-  // Legs. hip = 0 means the thigh continues straight down from the torso line.
-  const thighAngle = torsoAngle + 180 - hip
-  const kneeP = step(pelvis, thighAngle, SEG.thigh)
-  const shinAngle = thighAngle + knee
-  const ankleP = step(kneeP, shinAngle, SEG.shin)
-  const toe = step(ankleP, shinAngle - 90 + ankle, SEG.foot)
-
-  // Arms. shoulder = 0 hangs down, 180 is overhead.
-  const upperArmAngle = torsoAngle + 180 - shoulder
-  const elbowP = step(shoulders, upperArmAngle, SEG.upperArm)
-  const hand = step(elbowP, upperArmAngle - elbow, SEG.forearm)
-
-  const skeleton = {
-    pelvis, shoulders, head, neckTop, knee: kneeP, ankle: ankleP, toe, elbow: elbowP, hand,
-  }
-
-  /*
-   * Stand the figure on the floor rather than pinning its pelvis.
-   *
-   * The pelvis is the root of the kinematic chain, so without this a squat
-   * keeps its hips at a fixed height and sinks its feet through the ground --
-   * which is both wrong to look at and makes a hip-anchored arrow zero-length.
-   * Grounding the lowest foot point means the hips visibly drop, which is what
-   * a squat actually looks like.
-   *
-   * An explicit `dy` opts out: hanging and lying poses are positioned by hand.
+  /**
+   * Where to stand to watch it. 0 is side-on, 90 is face-on. Anything whose
+   * point is sideways — a lateral raise, a Cossack squat, an anti-rotation
+   * press — should say so here.
    */
-  if (pose.dy === undefined && pose.base === undefined) {
-    const lowest = Math.max(skeleton.toe.y, skeleton.ankle.y)
-    const shift = FLOOR_Y - lowest
-    for (const key of Object.keys(skeleton) as (keyof Skeleton)[]) {
-      skeleton[key] = { x: skeleton[key].x, y: skeleton[key].y + shift }
-    }
-  }
-
-  return skeleton
+  view?: number
 }
 
-/** Lying poses are the standing figure rotated, not a separate skeleton. */
-function baseTransform(base: FigureBase = 'standing'): string | undefined {
-  switch (base) {
-    case 'supine':
-      return 'rotate(-90 100 108) translate(0 46)'
-    case 'prone':
-      return 'rotate(-90 100 108) translate(0 46) scale(1 -1) translate(0 -216)'
-    default:
-      return undefined
-  }
-}
+/*
+ * A three-quarter view, not a shallow one.
+ *
+ * At 18 degrees the left and right sides projected about a pixel and a half
+ * apart, so the figure read as one thick flat drawing -- all of the geometry
+ * and none of the benefit. 38 is far enough to see there are two arms and
+ * still square-on enough to read a hinge.
+ */
+const DEFAULT_VIEW = 38
+const CYCLE_MS = 2600
 
-// ---------------------------------------------------------------- rendering
-
-function Body({ pose, ghost }: { pose: Pose; ghost?: boolean }) {
-  const s = build(pose)
-  const stroke = ghost ? 'var(--figure-ghost)' : 'var(--figure-ink)'
-  const width = ghost ? 3 : 4.5
-  const dash = ghost ? '5 5' : undefined
-
-  const line = (a: P, b: P, key: string) => (
-    <line key={key} x1={a.x} y1={a.y} x2={b.x} y2={b.y}
-      stroke={stroke} strokeWidth={width} strokeLinecap="round" strokeDasharray={dash} />
-  )
-
-  return (
-    <g transform={baseTransform(pose.base)} opacity={ghost ? 0.55 : 1}>
-      {line(s.pelvis, s.shoulders, 'torso')}
-      {line(s.shoulders, s.neckTop, 'neck')}
-      {line(s.pelvis, s.knee, 'thigh')}
-      {line(s.knee, s.ankle, 'shin')}
-      {line(s.ankle, s.toe, 'foot')}
-      {line(s.shoulders, s.elbow, 'uarm')}
-      {line(s.elbow, s.hand, 'farm')}
-      <circle cx={s.head.x} cy={s.head.y} r={SEG.head} fill="none"
-        stroke={stroke} strokeWidth={width} strokeDasharray={dash} />
-    </g>
-  )
-}
-
-function Props({ pose, props: list }: { pose: Pose; props: FigureProp[] }) {
-  const s = build(pose)
-  const t = baseTransform(pose.base)
-  const kit = 'var(--figure-kit)'
-
-  return (
-    <g transform={t}>
-      {list.includes('barbell') && (
-        <g>
-          <line x1={s.hand.x - 26} y1={s.hand.y} x2={s.hand.x + 26} y2={s.hand.y}
-            stroke={kit} strokeWidth={3.5} strokeLinecap="round" />
-          <circle cx={s.hand.x - 24} cy={s.hand.y} r={7} fill={kit} />
-          <circle cx={s.hand.x + 24} cy={s.hand.y} r={7} fill={kit} />
-        </g>
-      )}
-      {list.includes('dumbbell') && (
-        <g>
-          <line x1={s.hand.x - 9} y1={s.hand.y} x2={s.hand.x + 9} y2={s.hand.y}
-            stroke={kit} strokeWidth={3} strokeLinecap="round" />
-          <rect x={s.hand.x - 13} y={s.hand.y - 6} width={5} height={12} rx={1.5} fill={kit} />
-          <rect x={s.hand.x + 8} y={s.hand.y - 6} width={5} height={12} rx={1.5} fill={kit} />
-        </g>
-      )}
-      {list.includes('kettlebell') && (
-        <g>
-          <path d={`M ${s.hand.x - 6} ${s.hand.y} a 6 6 0 0 1 12 0`} fill="none" stroke={kit} strokeWidth={3} />
-          <circle cx={s.hand.x} cy={s.hand.y + 10} r={8} fill={kit} />
-        </g>
-      )}
-      {list.includes('bar') && (
-        <line x1={40} y1={s.hand.y} x2={160} y2={s.hand.y} stroke={kit} strokeWidth={4} strokeLinecap="round" />
-      )}
-      {list.includes('band') && (
-        <path d={`M ${s.hand.x} ${s.hand.y} Q ${s.hand.x + 18} ${s.hand.y + 22} ${s.hand.x} ${s.hand.y + 44}`}
-          fill="none" stroke={kit} strokeWidth={3} strokeDasharray="4 4" />
-      )}
-      {list.includes('bench') && (
-        <rect x={58} y={s.pelvis.y + 6} width={84} height={7} rx={3} fill={kit} />
-      )}
-      {list.includes('box') && (
-        <rect x={s.toe.x - 6} y={s.toe.y - 2} width={38} height={24} rx={2} fill="none" stroke={kit} strokeWidth={3} />
-      )}
-      {list.includes('wall') && (
-        <line x1={168} y1={20} x2={168} y2={172} stroke={kit} strokeWidth={4} strokeLinecap="round" />
-      )}
-    </g>
-  )
-}
-
-function Arrow({ from, to }: { from: P; to: P }) {
-  const dx = to.x - from.x
-  const dy = to.y - from.y
-  if (Math.hypot(dx, dy) < 14) return null
-  // Bow the path slightly so it reads as a movement, not a measurement.
-  const mx = (from.x + to.x) / 2 - dy * 0.16
-  const my = (from.y + to.y) / 2 + dx * 0.16
-  return (
-    <g>
-      <defs>
-        <marker id="fig-arrow" viewBox="0 0 10 10" refX="8" refY="5"
-          markerWidth="5" markerHeight="5" orient="auto-start-reverse">
-          <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--figure-arrow)" />
-        </marker>
-      </defs>
-      <path d={`M ${from.x} ${from.y} Q ${mx} ${my} ${to.x} ${to.y}`}
-        fill="none" stroke="var(--figure-arrow)" strokeWidth={3}
-        strokeLinecap="round" markerEnd="url(#fig-arrow)" />
-    </g>
-  )
-}
-
-const anchorFor = (s: Skeleton, which: FigureSpec['arrow']): P =>
-  which === 'hips' ? s.pelvis : which === 'shoulders' ? s.shoulders : s.hand
+/** Ease in and out, so the turnaround at each end is not a bounce. */
+const ease = (t: number) => (1 - Math.cos(t * Math.PI)) / 2
 
 export default function Figure({
-  spec, title, size = 220,
+  spec, title, size = 200, animate = true,
 }: {
   spec: FigureSpec
   title: string
   size?: number
+  animate?: boolean
 }) {
-  const startSkel = build(spec.start)
-  const endSkel = build(spec.end)
-  const which = spec.arrow ?? 'hands'
-  const showArrow = which !== 'none' && !spec.start.base && !spec.end.base
+  const reduced =
+    typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches
+  const [playing, setPlaying] = useState(animate && !reduced)
+  const [t, setT] = useState(0)
+  const [view, setView] = useState(spec.view ?? DEFAULT_VIEW)
+  const drag = useRef<{ x: number; view: number } | null>(null)
+
+  useEffect(() => {
+    if (!playing) return
+    let raf = 0
+    const started = performance.now()
+    const tick = (now: number) => {
+      // Ping-pong: 0 -> 1 -> 0. A rep goes up and comes back down.
+      const phase = ((now - started) % (CYCLE_MS * 2)) / CYCLE_MS
+      setT(phase <= 1 ? phase : 2 - phase)
+      raf = requestAnimationFrame(tick)
+    }
+    raf = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(raf)
+  }, [playing])
+
+  // Pose at this instant. A mid keyframe splits the rep into two halves.
+  const eased = ease(t)
+  const pose = spec.mid
+    ? eased < 0.5
+      ? lerpPose(spec.start, spec.mid, eased * 2)
+      : lerpPose(spec.mid, spec.end, (eased - 0.5) * 2)
+    : lerpPose(spec.start, spec.end, eased)
+
+  const live = applyBase(build(pose, spec.start), pose.base)
+  const ghost = applyBase(build(spec.start, spec.start), spec.start.base)
+  const p = (v: { x: number; y: number; z: number }) => project(v, view)
+
+  function onPointerDown(e: React.PointerEvent<SVGSVGElement>) {
+    drag.current = { x: e.clientX, view }
+    e.currentTarget.setPointerCapture(e.pointerId)
+  }
+  function onPointerMove(e: React.PointerEvent<SVGSVGElement>) {
+    if (!drag.current) return
+    setView(drag.current.view + (e.clientX - drag.current.x) * 0.6)
+  }
 
   return (
-    <figure className="exercise-figure" style={{ maxWidth: size }}>
-      <svg viewBox="0 0 200 200" role="img" aria-label={`Diagram: ${title}`}>
-        <line x1={16} y1={FLOOR_Y} x2={184} y2={FLOOR_Y} stroke="var(--figure-floor)" strokeWidth={2.5} strokeLinecap="round" />
-        <Body pose={spec.start} ghost />
-        {spec.props && <Props pose={spec.end} props={spec.props} />}
-        <Body pose={spec.end} />
-        {showArrow && <Arrow from={anchorFor(startSkel, which)} to={anchorFor(endSkel, which)} />}
+    <figure className="exercise-figure" style={{ maxWidth: size + 60 }}>
+      <svg
+        viewBox="0 0 200 200"
+        role="img"
+        aria-label={`${title}: schematic figure, drag to turn`}
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={() => { drag.current = null }}
+        onPointerCancel={() => { drag.current = null }}
+        style={{ touchAction: 'pan-y', cursor: 'ew-resize' }}
+      >
+        <line x1="12" y1="176" x2="188" y2="176" stroke="var(--figure-floor)" strokeWidth="2" />
+
+        {/* Where it started, so the range of the movement stays visible. */}
+        {!playing && <Body s={ghost} project={p} ghost />}
+        <Body s={live} project={p} />
+        {spec.props && spec.props.length > 0 && <Props s={live} project={p} list={spec.props} />}
       </svg>
+
       <figcaption>
-        <span className="fig-key"><i className="ghost" /> start</span>
-        <span className="fig-key"><i /> finish</span>
+        <button
+          type="button"
+          className="fig-btn"
+          onClick={() => setPlaying((v) => !v)}
+          aria-label={playing ? 'Pause the movement' : 'Play the movement'}
+        >
+          {playing ? '❚❚' : '▶'}
+        </button>
+        <button type="button" className="fig-btn" onClick={() => setView((v) => v - 30)} aria-label="Turn left">
+          ⟲
+        </button>
+        <button type="button" className="fig-btn" onClick={() => setView((v) => v + 30)} aria-label="Turn right">
+          ⟳
+        </button>
+        {/*
+          Scrub through the rep by hand. Play is for watching; this is for
+          stopping halfway down and looking at where the knee actually is,
+          which is the thing a still picture could never answer.
+        */}
+        <input
+          className="fig-scrub"
+          type="range"
+          min="0" max="1" step="0.02"
+          value={t}
+          aria-label="Scrub through the movement"
+          onChange={(e) => { setPlaying(false); setT(Number(e.target.value)) }}
+        />
       </figcaption>
+      <p className="fig-hint">
+        {t < 0.02 ? 'start' : t > 0.98 ? 'finish' : 'mid-rep'} · drag the figure to turn it
+      </p>
+
       {spec.fault && <p className="fig-fault">Watch for: {spec.fault}</p>}
     </figure>
+  )
+}
+
+type Proj = (v: { x: number; y: number; z: number }) => Projected
+
+/**
+ * One body, drawn far-to-near.
+ *
+ * Painter's algorithm: sort the bones by depth and draw the back ones first,
+ * thinner and dimmer. Without it the arms cross the torso at random and the
+ * whole thing reads flat however far you turn it.
+ */
+function Body({ s, project: p, ghost }: { s: Skeleton; project: Proj; ghost?: boolean }) {
+  const bones: { a: Projected; b: Projected; key: string }[] = []
+  const bone = (a: { x: number; y: number; z: number }, b: typeof a, key: string) =>
+    bones.push({ a: p(a), b: p(b), key })
+
+  bone(s.pelvis, s.shoulders, 'torso')
+  bone(s.shoulders, s.neckTop, 'neck')
+  for (const [name, side] of [['l', s.left], ['r', s.right]] as const) {
+    bone(side.shoulder, side.elbow, `${name}-uarm`)
+    bone(side.elbow, side.hand, `${name}-farm`)
+    bone(side.hip, side.knee, `${name}-thigh`)
+    bone(side.knee, side.ankle, `${name}-shin`)
+    bone(side.ankle, side.toe, `${name}-foot`)
+    bone(s.pelvis, side.hip, `${name}-pelvis`)
+    bone(s.shoulders, side.shoulder, `${name}-clav`)
+  }
+
+  bones.sort((x, y) => (x.a.depth + x.b.depth) / 2 - (y.a.depth + y.b.depth) / 2)
+  const head = p(s.head)
+
+  return (
+    <g opacity={ghost ? 0.4 : 1}>
+      {bones.map(({ a, b, key }) => {
+        const depth = (a.depth + b.depth) / 2
+        // Behind the midline: thinner, dimmer. In front: full weight.
+        const near = Math.max(0, Math.min(1, (depth + 14) / 28))
+        return (
+          <line
+            key={key}
+            x1={a.x} y1={a.y} x2={b.x} y2={b.y}
+            stroke={ghost ? 'var(--figure-ghost)' : 'var(--figure-ink)'}
+            strokeWidth={(ghost ? 2.6 : 3.4) + near * 1.6}
+            strokeLinecap="round"
+            strokeDasharray={ghost ? '5 5' : undefined}
+            opacity={ghost ? 1 : 0.45 + near * 0.55}
+          />
+        )
+      })}
+      <circle
+        cx={head.x} cy={head.y} r={SEG.head * (1 + head.depth / 900)}
+        fill="none"
+        stroke={ghost ? 'var(--figure-ghost)' : 'var(--figure-ink)'}
+        strokeWidth={ghost ? 2.6 : 4}
+        strokeDasharray={ghost ? '5 5' : undefined}
+      />
+    </g>
+  )
+}
+
+/** Kit, drawn where the hands and feet actually are. */
+function Props({ s, project: p, list }: { s: Skeleton; project: Proj; list: FigureProp[] }) {
+  const kit = 'var(--figure-kit)'
+  const lh = p(s.left.hand)
+  const rh = p(s.right.hand)
+  const mid = { x: (lh.x + rh.x) / 2, y: (lh.y + rh.y) / 2 }
+
+  return (
+    <g>
+      {list.includes('barbell') && (
+        <>
+          <line x1={mid.x - 30} y1={mid.y} x2={mid.x + 30} y2={mid.y} stroke={kit} strokeWidth="3.5" strokeLinecap="round" />
+          <circle cx={mid.x - 26} cy={mid.y} r="6" fill="none" stroke={kit} strokeWidth="3" />
+          <circle cx={mid.x + 26} cy={mid.y} r="6" fill="none" stroke={kit} strokeWidth="3" />
+        </>
+      )}
+      {list.includes('bar') && (
+        <line x1="30" y1={Math.min(lh.y, rh.y)} x2="170" y2={Math.min(lh.y, rh.y)} stroke={kit} strokeWidth="3.5" strokeLinecap="round" />
+      )}
+      {list.includes('dumbbell') && [lh, rh].map((h, i) => (
+        <line key={i} x1={h.x - 7} y1={h.y} x2={h.x + 7} y2={h.y} stroke={kit} strokeWidth="5" strokeLinecap="round" />
+      ))}
+      {list.includes('kettlebell') && (
+        <circle cx={mid.x} cy={mid.y + 7} r="6.5" fill="none" stroke={kit} strokeWidth="3" />
+      )}
+      {list.includes('band') && (
+        <line x1={mid.x} y1={mid.y} x2={mid.x} y2="176" stroke={kit} strokeWidth="2" strokeDasharray="4 4" />
+      )}
+      {list.includes('bench') && <rect x="52" y="120" width="96" height="7" rx="3" fill="none" stroke={kit} strokeWidth="3" />}
+      {list.includes('box') && <rect x="118" y="146" width="46" height="30" rx="3" fill="none" stroke={kit} strokeWidth="3" />}
+      {list.includes('wall') && <line x1="176" y1="30" x2="176" y2="176" stroke={kit} strokeWidth="3" />}
+    </g>
   )
 }

@@ -59,7 +59,20 @@ const cossack: Pose = { torso: 22, hip: 92, knee: 118, ankle: 14 }
 const cat: Pose = { torso: 90, hip: 88, knee: 90, shoulder: 92, dy: 40 }
 const cow: Pose = { torso: 90, hip: 76, knee: 90, shoulder: 92, neck: -22, dy: 40 }
 const sideLie: Pose = { base: 'supine', hip: 20, knee: 40, shoulder: 60 }
-const carry: Pose = { shoulder: 4 }
+const carry: Pose = { shoulder: 4, shoulderAbduct: 12 }
+const carryStride: Pose = { shoulder: 4, shoulderAbduct: 12, hip: 18, knee: 10, split: 1 }
+
+/*
+ * Poses that only make sense now that the figure has a third dimension.
+ * Every one of these was previously drawn as somebody standing still, because
+ * the movement happens in a plane the old engine could not see.
+ */
+const lateralRaiseDown: Pose = { shoulder: 4, shoulderAbduct: 8 }
+const lateralRaiseUp: Pose = { shoulder: 4, shoulderAbduct: 88 }
+const pallofIn: Pose = { shoulder: 70, elbow: 120, twist: 18 }
+const pallofOut: Pose = { shoulder: 82, elbow: 6, twist: 0 }
+const cossackStand: Pose = { hipAbduct: 40 }
+const cossackDown: Pose = { torso: 24, hip: 96, knee: 112, hipAbduct: 44, split: 1 }
 const runStride: Pose = { torso: 8, hip: 34, knee: 46, shoulder: 34, elbow: 80 }
 const runDrive: Pose = { torso: 8, hip: 78, knee: 96, shoulder: 22, elbow: 84 }
 
@@ -71,11 +84,18 @@ const runDrive: Pose = { torso: 8, hip: 78, knee: 96, shoulder: 22, elbow: 84 }
  */
 const BY_PATTERN: Partial<Record<MovementPattern, FigureSpec>> = {
   squat: {
-    start: stand, end: squatBottom, arrow: 'hips',
+    // Hands racked, so a barbell prop lands on the upper back where it belongs
+    // rather than hanging at the waist.
+    start: { ...stand, shoulder: -18, elbow: 152 },
+    end: { ...squatBottom, shoulder: -18, elbow: 152 },
+    arrow: 'hips',
     fault: 'the chest dropping before the hips do — that is a good morning, not a squat',
   },
   lunge: {
-    start: stand, end: lungeDown, arrow: 'hips',
+    // split: 1 holds the far leg at the start pose while the near one descends,
+    // which is the entire visual difference between a lunge and a squat.
+    start: stand, end: { ...lungeDown, split: 1 }, arrow: 'hips',
+    view: 26,
     fault: 'the front knee collapsing inward as you descend',
   },
   hinge: {
@@ -103,8 +123,8 @@ const BY_PATTERN: Partial<Record<MovementPattern, FigureSpec>> = {
     fault: 'the lower back arching as you fatigue; stop the set there',
   },
   'core-anti-rotation': {
-    start: plankTop, end: plankTop, arrow: 'none',
-    fault: 'the hips rocking — the whole point is that nothing moves',
+    start: pallofIn, end: pallofOut, arrow: 'hands', view: 62,
+    fault: 'letting the shoulders turn with the cable — nothing above the hips should rotate',
   },
   'core-flexion': {
     start: supineFlat, end: supineKnees, arrow: 'none',
@@ -114,7 +134,7 @@ const BY_PATTERN: Partial<Record<MovementPattern, FigureSpec>> = {
     start: stand, end: curlUp, arrow: 'hands',
     fault: 'swinging the torso to start the rep',
   },
-  carry: { start: carry, end: carry, arrow: 'none', fault: 'leaning away from the load' },
+  carry: { start: carry, end: carryStride, arrow: 'none', view: 30, fault: 'leaning away from the load' },
   conditioning: { start: stand, end: squatHalf, arrow: 'hips' },
   mobility: { start: stand, end: fold, arrow: 'hands' },
   stretch: { start: stand, end: fold, arrow: 'none' },
@@ -125,6 +145,55 @@ const BY_PATTERN: Partial<Record<MovementPattern, FigureSpec>> = {
 
 /** Where the pattern default would be wrong, bland, or actively misleading. */
 const BY_ID: Record<string, FigureSpec> = {
+  // --- movements whose point is out of the sagittal plane ----------------
+  // These used to inherit a pattern default that showed somebody standing
+  // still, because the whole exercise happens in a plane the flat figure had
+  // no way to draw.
+  'is-lat-raise': {
+    start: lateralRaiseDown, end: lateralRaiseUp, arrow: 'hands', view: 84,
+    props: ['dumbbell'],
+    fault: 'shrugging the weight up — the traps take over the moment the elbows pass shoulder height',
+  },
+  'ig-is-cable-lateral-raise': {
+    start: lateralRaiseDown, end: lateralRaiseUp, arrow: 'hands', view: 84,
+    fault: 'swinging the torso to start the rep',
+  },
+  'co-pallof': {
+    start: pallofIn, end: pallofOut, arrow: 'hands', view: 62, props: ['band'],
+    fault: 'letting the shoulders turn with the cable — nothing above the hips should rotate',
+  },
+  'is-rear-fly': {
+    start: { torso: 62, hip: 66, knee: 16, shoulder: 88, shoulderAbduct: 10 },
+    end: { torso: 62, hip: 66, knee: 16, shoulder: 88, shoulderAbduct: 72 },
+    arrow: 'hands', view: 74, props: ['dumbbell'],
+    fault: 'lifting with the hands instead of throwing the elbows out sideways',
+  },
+  'is-band-pullapart': {
+    start: { shoulder: 88, shoulderAbduct: 6 }, end: { shoulder: 88, shoulderAbduct: 54 },
+    arrow: 'hands', view: 84, props: ['band'],
+    fault: 'letting the ribs flare as the band comes apart',
+  },
+  'ig-st-miniband-abduction': {
+    start: { hipAbduct: 4 }, end: { hipAbduct: 36, split: 1 },
+    arrow: 'none', view: 80, props: ['band'],
+    fault: 'letting the hip hike up to swing the leg out instead of driving it from the glute',
+  },
+  'ig-is-fire-hydrant': {
+    start: { base: 'prone', hip: 88, knee: 90, hipAbduct: 4, dy: 40 },
+    end: { base: 'prone', hip: 88, knee: 90, hipAbduct: 46, split: 1, dy: 40 },
+    arrow: 'none', view: 62,
+    fault: 'rolling the whole body open rather than moving at the hip',
+  },
+  'is-hip-abduction': {
+    start: { ...seated, hipAbduct: 6 }, end: { ...seated, hipAbduct: 34 },
+    arrow: 'none', view: 78,
+    fault: 'leaning back to make the range look bigger',
+  },
+  'ln-cossack': {
+    start: cossackStand, end: cossackDown, arrow: 'hips', view: 80,
+    fault: 'the straight leg rolling onto its side — keep that heel down and the toes up',
+  },
+
   // --- squats and legs ---
   'sq-back': { start: stand, end: squatBottom, props: ['barbell'], arrow: 'hips', fault: 'the chest dropping faster than the hips' },
   'sq-front': { start: rack, end: { ...squatBottom, shoulder: 40, elbow: 140 }, props: ['barbell'], arrow: 'hips', fault: 'the elbows dropping, which pulls the bar down with them' },
@@ -183,7 +252,6 @@ const BY_ID: Record<string, FigureSpec> = {
   'wk-roll-down': { start: stand, end: fold, arrow: 'shoulders' },
   'wk-deep-squat-pry': { start: stand, end: { ...squatBottom, shoulder: 40, elbow: 120 }, arrow: 'hips' },
   'fx-cossack-hold': { start: stand, end: cossack, arrow: 'hips' },
-  'ln-cossack': { start: stand, end: cossack, arrow: 'hips' },
   'ig-mo-gorilla-cossack': { start: cossack, end: { ...cossack, torso: 42 }, arrow: 'none' },
   'ig-mo-cossack-to-lunge': { start: cossack, end: lungeDown, arrow: 'hips' },
   'wd-couch': { start: { hip: 90, knee: 100 }, end: { torso: -14, hip: 24, knee: 132, dy: 26 }, props: ['wall'], arrow: 'none', fault: 'arching the lower back to feel a bigger stretch' },

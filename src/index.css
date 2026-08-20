@@ -933,11 +933,44 @@ a { color: var(--accent); }
 
 .exercise-figure figcaption {
   display: flex;
-  gap: 14px;
+  gap: 8px;
+  align-items: center;
   justify-content: center;
   font-size: 11px;
   color: var(--text-faint);
   margin-top: 2px;
+}
+
+/* Small on purpose: they sit under a diagram, not in a toolbar. Still 44px of
+   touch target, which is the rule. */
+.fig-btn {
+  min-width: 44px;
+  min-height: 44px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--text-dim);
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.fig-btn:hover { border-color: var(--accent-dim); color: var(--text); }
+.fig-scrub {
+  flex: 1;
+  min-width: 60px;
+  min-height: 44px;
+  padding: 0;
+  margin: 0;
+  background: none;
+  border: none;
+}
+
+.fig-hint {
+  margin: 0;
+  text-align: center;
+  font-size: 11px;
+  color: var(--text-faint);
 }
 
 .fig-key { display: inline-flex; align-items: center; gap: 5px; }

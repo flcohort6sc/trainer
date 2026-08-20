@@ -13,6 +13,7 @@ import { EQUIPMENT_GROUPS } from './src/data/equipment'
 import { ceilingFor, currentPlace, withEquipment, withPlace } from './src/engine/places'
 import { niggleFilter } from './src/engine/niggles'
 import { figureFor, figureCoverage } from './src/data/figures'
+import { applyBase, build, lerpPose, project } from './src/components/figureGeometry'
 import { LESSONS, TOPIC_LABEL } from './src/data/lessons'
 import { SEED_PROGRAMS } from './src/data/seedPrograms'
 import { SEED_ROUTINES } from './src/data/seedRoutines'
@@ -1037,6 +1038,75 @@ try {
   rejected = true
 }
 check('a file that is not ours is refused with a readable error', rejected)
+
+console.log('\n[F1] The figure is genuinely three-dimensional')
+const squatSpec = figureFor(data.exercises.find((e) => e.id === 'sq-back')!)!
+const squatEnd = applyBase(build(squatSpec.end, squatSpec.start), squatSpec.end.base)
+const shot = (v: { x: number; y: number; z: number }, azimuth: number) => project(v, azimuth)
+
+// Both sides exist and are separated in space, not drawn on top of each other.
+check('left and right are in different places',
+  Math.abs(shot(squatEnd.left.knee, 38).x - shot(squatEnd.right.knee, 38).x) > 5,
+  `${Math.round(Math.abs(shot(squatEnd.left.knee, 38).x - shot(squatEnd.right.knee, 38).x))}px apart at the default view`)
+check('walking round the far side swaps which limb is nearer',
+  Math.sign(shot(squatEnd.left.knee, 38).depth - shot(squatEnd.right.knee, 38).depth)
+  !== Math.sign(shot(squatEnd.left.knee, 142).depth - shot(squatEnd.right.knee, 142).depth),
+  `depth gap ${Math.round(shot(squatEnd.left.knee, 38).depth - shot(squatEnd.right.knee, 38).depth)} at 38°, ${Math.round(shot(squatEnd.left.knee, 142).depth - shot(squatEnd.right.knee, 142).depth)} at 142°`)
+check('turning the camera actually moves the projection',
+  Math.abs(shot(squatEnd.right.hand, 0).x - shot(squatEnd.right.hand, 70).x) > 3)
+
+// A squat lowers the hips and leans the chest. If this ever stops being true
+// the figure has quietly become a picture of somebody standing up.
+const squatStart = applyBase(build(squatSpec.start, squatSpec.start), squatSpec.start.base)
+check('the squat actually squats',
+  shot(squatEnd.pelvis, 38).y > shot(squatStart.pelvis, 38).y + 8,
+  `hips drop ${Math.round(shot(squatEnd.pelvis, 38).y - shot(squatStart.pelvis, 38).y)}px`)
+check('and the feet stay on the floor',
+  Math.abs(shot(squatEnd.right.toe, 38).y - shot(squatStart.right.toe, 38).y) < 12)
+
+console.log('\n[F2] Motion is interpolated from the poses, never invented')
+const half = lerpPose(squatSpec.start, squatSpec.end, 0.5)
+check('half way is half way', Math.abs((half.knee ?? 0) - ((squatSpec.end.knee ?? 0) / 2)) < 0.01,
+  `knee ${half.knee?.toFixed(1)}° at t=0.5, ${squatSpec.end.knee}° at the bottom`)
+check('t=0 is exactly the start pose', lerpPose(squatSpec.start, squatSpec.end, 0).knee === (squatSpec.start.knee ?? 0))
+check('t=1 is exactly the end pose', lerpPose(squatSpec.start, squatSpec.end, 1).knee === (squatSpec.end.knee ?? 0))
+
+// Unilateral work: the two legs must NOT be in the same place.
+const lungeEx = data.exercises.find((e) => e.pattern === 'lunge' && !e.archived)!
+const lunge = figureFor(lungeEx)!
+const lungeEnd = applyBase(build(lunge.end, lunge.start), lunge.end.base)
+check('a lunge has a front leg and a back leg',
+  Math.abs(shot(lungeEnd.left.knee, 26).x - shot(lungeEnd.right.knee, 26).x) > 8,
+  `${lungeEx.name}: knees ${Math.round(Math.abs(shot(lungeEnd.left.knee, 26).x - shot(lungeEnd.right.knee, 26).x))}px apart`)
+
+console.log('\n[F3] Movements that happen sideways are drawn sideways')
+const pallof = figureFor(data.exercises.find((e) => e.id === 'co-pallof')!)!
+const pallofA = build(pallof.start, pallof.start)
+const pallofB = build(pallof.end, pallof.start)
+check('a Pallof press presses forward, because that is what it is',
+  pallofB.right.hand.x - pallofA.right.hand.x > 8,
+  `hands travel ${Math.round(pallofB.right.hand.x - pallofA.right.hand.x)} units forward`)
+check('and the shoulders start turned and finish square, which is the anti-rotation',
+  (pallof.start.twist ?? 0) > (pallof.end.twist ?? 0),
+  `twist ${pallof.start.twist}° → ${pallof.end.twist}°`)
+
+const cossack = figureFor(data.exercises.find((e) => e.id === 'ln-cossack')!)!
+const cossackS = build(cossack.end, cossack.start)
+check('a Cossack squat stands wide, which is the whole exercise',
+  Math.abs(cossackS.left.ankle.z - cossackS.right.ankle.z) > 25,
+  `${Math.round(Math.abs(cossackS.left.ankle.z - cossackS.right.ankle.z))} units between the feet`)
+for (const id of ['is-lat-raise', 'is-band-pullapart', 'ig-st-miniband-abduction']) {
+  const ex = data.exercises.find((e) => e.id === id)
+  if (!ex) continue
+  const spec = figureFor(ex)!
+  const startS = build(spec.start, spec.start)
+  const endS = build(spec.end, spec.start)
+  // The hands (or knees) must move in z -- if they only move in the sagittal
+  // plane, the figure is showing the wrong exercise.
+  const dz = Math.abs(endS.right.hand.z - startS.right.hand.z) + Math.abs(endS.right.knee.z - startS.right.knee.z)
+  check(`${ex.name} moves out of the sagittal plane`, dz > 5, `${Math.round(dz)} units of lateral travel`)
+  check(`${ex.name} is viewed from somewhere you can see that`, (spec.view ?? 0) > 40, `view ${spec.view}°`)
+}
 
 // ---------------------------------------------------------------- summary
 console.log(`\n${'='.repeat(52)}`)
