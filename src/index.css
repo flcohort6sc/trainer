@@ -1,0 +1,967 @@
+/*
+  Design notes:
+  - Mobile-first. Every interactive target is >= 44px tall because you will be
+    tapping this with sweaty hands, one-handed, between sets.
+  - Dark by default; the gym is not a bright office and neither is 6am.
+  - No CSS framework. Everything here is readable and yours to change.
+*/
+
+:root {
+  --bg: #0f1115;
+  --surface: #171a21;
+  --surface-2: #1e222b;
+  --border: #2a2f3a;
+  --text: #e8eaed;
+  --text-dim: #9aa3b2;
+  /* 5.6:1 on the card surface. The old #6b7382 measured 3.65:1, which is below
+     AA -- and this token carries every explanation line in the app, so it was
+     the single most-read colour and the least legible one. */
+  --text-faint: #8b93a1;
+  --accent: #4f8cff;
+  --accent-dim: #2d5299;
+  --success: #3fb950;
+  --warn: #d29922;
+  --danger: #f85149;
+  --radius: 10px;
+  --radius-sm: 6px;
+
+  color-scheme: dark;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  font-synthesis: none;
+  -webkit-text-size-adjust: 100%;
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme='dark']) {
+    --bg: #f6f7f9;
+    --surface: #ffffff;
+    --surface-2: #eef0f4;
+    --border: #d8dce3;
+    --text: #16191f;
+    --text-dim: #5a6472;
+    /* 4.8:1 on white; the old #8b93a1 was 3.09:1. Same reasoning as dark. */
+    --text-faint: #6b7280;
+    --accent: #2563eb;
+    --accent-dim: #93b4f7;
+    --success: #1a7f37;
+    --warn: #9a6700;
+    --danger: #cf222e;
+    color-scheme: light;
+  }
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  overscroll-behavior-y: none;
+}
+
+#root {
+  max-width: 720px;
+  margin: 0 auto;
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ---------- layout ---------- */
+
+.app-main {
+  flex: 1;
+  /* Installed on iOS the status bar is translucent and the page runs underneath
+     it, so the top inset is not optional -- without it the first heading sits
+     behind the clock. The bottom inset is handled on .tabbar. */
+  padding: calc(16px + env(safe-area-inset-top, 0px)) 16px 96px;
+}
+
+.tabbar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  padding-bottom: env(safe-area-inset-bottom, 0);
+  z-index: 50;
+}
+
+.tabbar-inner {
+  max-width: 720px;
+  margin: 0 auto;
+  display: flex;
+  width: 100%;
+}
+
+.tabbar button {
+  flex: 1;
+  background: none;
+  border: none;
+  color: var(--text-faint);
+  padding: 10px 4px 12px;
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  min-height: 56px;
+  transition: color 0.15s;
+}
+
+.tabbar button .icon { font-size: 20px; line-height: 1; }
+.tabbar button[aria-current='page'] { color: var(--accent); }
+
+/* ---------- typography ---------- */
+
+h1 { font-size: 24px; margin: 0 0 4px; letter-spacing: -0.02em; }
+h2 { font-size: 18px; margin: 24px 0 10px; letter-spacing: -0.01em; }
+h3 { font-size: 15px; margin: 0 0 6px; }
+
+.subtitle { color: var(--text-dim); font-size: 14px; margin: 0 0 20px; }
+.dim { color: var(--text-dim); }
+.faint { color: var(--text-faint); font-size: 13px; }
+.mono { font-variant-numeric: tabular-nums; }
+
+/* ---------- cards ---------- */
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px;
+  margin-bottom: 10px;
+}
+
+.card-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.card.clickable { cursor: pointer; transition: border-color 0.15s, background 0.15s; }
+.card.clickable:hover { border-color: var(--accent-dim); background: var(--surface-2); }
+.card.selected { border-color: var(--accent); }
+
+/* ---------- buttons ---------- */
+
+button, .btn {
+  font-family: inherit;
+  font-size: 15px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: filter 0.15s, background 0.15s;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 0 16px;
+  background: var(--surface-2);
+  color: var(--text);
+  border: 1px solid var(--border);
+  font-weight: 500;
+}
+
+.btn:hover { filter: brightness(1.15); }
+.btn:active { filter: brightness(0.9); }
+.btn:disabled { opacity: 0.45; cursor: not-allowed; filter: none; }
+
+.btn-primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+.btn-danger { background: transparent; border-color: var(--danger); color: var(--danger); }
+.btn-ghost { background: transparent; border-color: transparent; color: var(--text-dim); }
+.btn-block { width: 100%; }
+/*
+  44px is the rule stated at the top of this file, and these were the four
+  places breaking it: small buttons at 34, segment tabs at 38, selectable chips
+  at 32 and the settings button at 40. Measured, not guessed. The visual size
+  stays small -- the touch target does not.
+*/
+.btn-sm { min-height: 44px; padding: 0 10px; font-size: 13px; }
+
+.btn-group { display: flex; gap: 8px; flex-wrap: wrap; }
+
+/* ---------- forms ---------- */
+
+label { display: block; font-size: 13px; color: var(--text-dim); margin-bottom: 4px; font-weight: 500; }
+
+input, select, textarea {
+  width: 100%;
+  font-family: inherit;
+  font-size: 16px; /* 16px stops iOS Safari zooming on focus */
+  padding: 10px 12px;
+  min-height: 44px;
+  background: var(--surface-2);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+
+input:focus, select:focus, textarea:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: -1px;
+  border-color: var(--accent);
+}
+
+textarea { min-height: 72px; resize: vertical; line-height: 1.5; }
+
+.field { margin-bottom: 14px; }
+.field-row { display: flex; gap: 10px; }
+.field-row > * { flex: 1; }
+
+/* ---------- chips / tags ---------- */
+
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  padding: 4px 9px;
+  border-radius: 999px;
+  background: var(--surface-2);
+  color: var(--text-dim);
+  border: 1px solid var(--border);
+  white-space: nowrap;
+}
+
+.chip.selectable { cursor: pointer; user-select: none; min-height: 44px; }
+.chip.on { background: var(--accent); border-color: var(--accent); color: #fff; }
+.chip.pattern { background: var(--accent-dim); color: var(--text); border-color: transparent; }
+.chip.muscle { background: transparent; }
+
+/* ---------- set logging table ---------- */
+
+.set-grid {
+  display: grid;
+  grid-template-columns: 28px 1fr 1fr 52px 44px;
+  gap: 6px;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.set-grid input { min-height: 44px; padding: 6px 8px; text-align: center; font-variant-numeric: tabular-nums; }
+.set-grid .set-num { text-align: center; color: var(--text-faint); font-size: 13px; font-variant-numeric: tabular-nums; }
+
+.set-head {
+  font-size: 11px;
+  color: var(--text-faint);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  text-align: center;
+}
+
+.check-btn {
+  min-height: 44px;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  border-radius: var(--radius-sm);
+  color: var(--text-faint);
+  font-size: 17px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.check-btn.done { background: var(--success); border-color: var(--success); color: #fff; }
+
+.set-row.done input { opacity: 0.55; }
+
+/* ---------- misc ---------- */
+
+.empty {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--text-faint);
+}
+
+.empty .big { font-size: 36px; margin-bottom: 10px; }
+
+.banner {
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  font-size: 13px;
+  margin-bottom: 12px;
+  border: 1px solid;
+  line-height: 1.45;
+}
+
+.banner-warn { background: color-mix(in srgb, var(--warn) 12%, transparent); border-color: var(--warn); color: var(--text); }
+.banner-info { background: color-mix(in srgb, var(--accent) 12%, transparent); border-color: var(--accent-dim); color: var(--text); }
+
+/* ---------- exercise detail ---------- */
+
+.cue-list {
+  margin: 6px 0 0;
+  padding-left: 20px;
+  color: var(--text-dim);
+  line-height: 1.6;
+}
+
+.cue-list li { margin-bottom: 6px; }
+
+/* ---------- editors ---------- */
+
+.editor { padding-bottom: 40px; }
+
+/* The slot's name is editable in place: it is a label, and making it look like
+   a form field would bury it under chrome. */
+.slot-label {
+  width: 100%;
+  font: inherit;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text);
+  background: none;
+  border: none;
+  border-bottom: 1px dashed var(--border);
+  border-radius: 0;
+  padding: 2px 0;
+  min-height: 32px;
+}
+
+.slot-label:focus { outline: none; border-bottom-color: var(--accent); }
+
+.check-row {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  font-size: 14px;
+  line-height: 1.45;
+  cursor: pointer;
+}
+
+.check-row input { width: 20px; height: 20px; margin-top: 2px; flex-shrink: 0; }
+
+/* ---------- the week ---------- */
+
+.week-header {
+  border-left: 3px solid var(--accent);
+  background: var(--surface);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  margin-bottom: 12px;
+}
+
+.week-header.is-deload { border-left-color: var(--warn); }
+
+/*
+  A row per day rather than a seven-column grid. A calendar grid on a 375px
+  screen gives every day 50 pixels, which is enough for a dot and not enough for
+  the reason the day exists -- and the reason is the part worth reading.
+*/
+.plan-day {
+  display: flex;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.plan-day:last-of-type { border-bottom: none; }
+.plan-day.is-past { opacity: 0.55; }
+
+.plan-day.is-today {
+  background: var(--surface);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  border-bottom: none;
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+
+.plan-date {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 34px;
+  flex-shrink: 0;
+}
+
+.plan-weekday {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-faint);
+}
+
+.plan-daynum { font-size: 17px; font-weight: 600; }
+.plan-items { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 8px; }
+.plan-item { display: flex; gap: 8px; align-items: flex-start; }
+.plan-icon { font-size: 15px; line-height: 1.4; flex-shrink: 0; }
+.plan-done { margin: 2px 0 0; font-size: 12px; color: var(--success); }
+
+/* ---------- settings, off the tab bar ---------- */
+
+/*
+  The settings button floats over the top-right corner, so any view whose first
+  element is a header row has to leave it somewhere to sit -- otherwise it lands
+  on top of that row's own button.
+*/
+.app-main > .card-row:first-child { padding-right: 46px; }
+
+.settings-button {
+  position: fixed;
+  top: calc(10px + env(safe-area-inset-top, 0px));
+  right: 12px;
+  z-index: 40;
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  font-size: 18px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+}
+
+/* ---------- the place sheet ---------- */
+
+/*
+  A sheet from the bottom rather than a menu from the corner: the corner is
+  where your hand is not, and this is a one-handed action.
+*/
+.sheet-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: rgb(0 0 0 / 0.5);
+  display: flex;
+  align-items: flex-end;
+}
+
+.sheet {
+  width: 100%;
+  max-width: 720px;
+  margin: 0 auto;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  border-radius: var(--radius) var(--radius) 0 0;
+  padding: 16px 16px calc(16px + env(safe-area-inset-bottom, 0px));
+}
+
+.sheet-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 52px;
+  padding: 8px 10px;
+  margin-bottom: 6px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+  color: var(--text);
+  font: inherit;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.sheet-row.is-on { border-color: var(--accent); background: var(--accent-dim); font-weight: 600; }
+
+/* ---------- places ---------- */
+
+.place-row {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  margin: 4px 0 12px;
+  padding-bottom: 2px;
+}
+
+.place-chip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  min-height: 44px;
+  padding: 8px 14px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--text-dim);
+  font: inherit;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.place-chip.is-on {
+  border-color: var(--accent);
+  background: var(--accent-dim);
+  color: var(--text);
+  font-weight: 600;
+}
+
+.place-icon { font-size: 16px; }
+
+/* ---------- the weekly review ----------
+   Tone rides on a left edge rather than a filled background. Several of these
+   stack, and four coloured blocks in a row reads as an alarm rather than as a
+   review of a normal training week. */
+.insight {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--text-faint);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  margin-bottom: 8px;
+}
+.insight-watch { border-left-color: var(--warn); }
+.insight-good { border-left-color: var(--success); }
+.insight-neutral { border-left-color: var(--text-faint); }
+
+.insight-headline { margin: 0; font-weight: 600; }
+.insight-evidence { margin: 3px 0 0; font-size: 12px; color: var(--text-dim); }
+.insight-suggestion { margin: 6px 0 0; font-size: 13px; color: var(--text-dim); }
+
+.divider { height: 1px; background: var(--border); margin: 20px 0; border: 0; }
+
+.stat-row { display: flex; gap: 10px; margin-bottom: 14px; }
+
+.stat {
+  flex: 1;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px 10px;
+  text-align: center;
+}
+
+.stat .value { font-size: 22px; font-weight: 600; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+.stat .label { font-size: 11px; color: var(--text-faint); text-transform: uppercase; letter-spacing: 0.04em; margin-top: 2px; }
+
+.reason {
+  font-size: 12px;
+  color: var(--text-faint);
+  font-style: italic;
+  margin-top: 3px;
+}
+
+.direction-up { color: var(--success); }
+.direction-down { color: var(--danger); }
+.direction-hold { color: var(--text-dim); }
+.direction-new { color: var(--accent); }
+
+.sticky-actions {
+  position: sticky;
+  bottom: 72px;
+  background: var(--bg);
+  padding: 8px 0;
+  /* Its own height plus the tab bar, so the last set row is not sitting
+     underneath it. Without this the bottom exercise of a session is unreachable
+     -- which is the one you are logging when you are most tired. */
+  margin: 8px 0 84px;
+}
+
+/* Fade the scrolling content out above the button instead of letting it show
+   through -- a gradient *behind* the button leaves text legible under it. */
+.sticky-actions::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 100%;
+  height: 24px;
+  background: linear-gradient(to top, var(--bg), transparent);
+  pointer-events: none;
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 100;
+  padding: 0;
+}
+
+.modal {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px 14px 0 0;
+  width: 100%;
+  max-width: 720px;
+  max-height: 88vh;
+  overflow-y: auto;
+  padding: 18px 16px calc(24px + env(safe-area-inset-bottom, 0));
+}
+
+@media (min-width: 600px) {
+  .modal-backdrop { align-items: center; padding: 20px; }
+  .modal { border-radius: 14px; }
+}
+
+.list-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.list-item:last-child { border-bottom: none; }
+
+.search-bar { margin-bottom: 12px; }
+
+.sparkline { display: block; width: 100%; height: 120px; }
+
+a { color: var(--accent); }
+
+/* ---------- day strip (Today) ---------- */
+
+.day-strip {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin: 12px 0 10px;
+}
+
+.day-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1px;
+  padding: 12px;
+  min-height: 88px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.day-card.is-done {
+  border-color: var(--success);
+  opacity: 0.72;
+}
+
+/*
+  The lead card is whichever routine the time of day actually calls for. The
+  other one stays on screen because knowing the evening exists is useful, but it
+  is deliberately small -- being nudged towards a wind-down at 07:00 is noise.
+*/
+.day-card.is-lead {
+  grid-column: 1 / -1;
+  gap: 2px;
+  padding: 14px;
+}
+
+.day-card.is-second {
+  grid-column: 1 / -1;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  min-height: 0;
+  padding: 10px 12px;
+}
+
+.day-card.is-second .day-when { flex-shrink: 0; }
+.day-card.is-second .day-mins { margin-left: auto; }
+
+.day-icon { font-size: 20px; line-height: 1.2; }
+.day-card.is-done .day-icon { color: var(--success); font-weight: 700; }
+.day-when { font-size: 11px; color: var(--text-faint); text-transform: uppercase; letter-spacing: 0.04em; }
+.day-name { font-size: 15px; font-weight: 600; }
+
+.card-button {
+  display: block;
+  width: 100%;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+/* ---------- flow player ---------- */
+
+/*
+  Fixed rather than inline: the player covers the tab bar on purpose. Nothing
+  should be one mis-tap away when you are mid-hold with your eyes shut.
+*/
+.flow {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  padding: env(safe-area-inset-top, 0) 16px env(safe-area-inset-bottom, 16px);
+}
+
+.flow-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 0;
+}
+
+.flow-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 6px;
+  min-height: 0;
+}
+
+.flow-kicker {
+  margin: 0;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+.flow-name {
+  margin: 0;
+  font-size: 26px;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  max-width: 20ch;
+}
+
+.flow-side {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.flow-ring {
+  position: relative;
+  width: 200px;
+  height: 200px;
+  margin: 8px 0;
+}
+
+.ring-track {
+  fill: none;
+  stroke: var(--surface-2);
+  stroke-width: 10;
+}
+
+.ring-fill {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 10;
+  stroke-linecap: round;
+  transform: rotate(-90deg);
+  transform-origin: 100px 100px;
+  transition: stroke-dashoffset 0.25s linear;
+}
+
+.ring-fill.is-ready { stroke: var(--warn); }
+
+.flow-count {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: 52px;
+  font-weight: 300;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.03em;
+}
+
+.flow-cue {
+  margin: 0;
+  max-width: 34ch;
+  font-size: 14px;
+  color: var(--text-dim);
+  line-height: 1.45;
+}
+
+.flow-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-bottom: 12px;
+}
+
+.flow-row {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  align-items: center;
+}
+
+.flow-row .btn { min-height: 52px; }
+.flow-play { flex: 1; max-width: 220px; }
+.flow-next { text-align: center; margin: 0; font-size: 12px; }
+
+.flow-done .flow-body { justify-content: center; }
+
+.feel-row { display: flex; gap: 8px; justify-content: center; }
+.feel-btn { font-size: 22px; min-width: 52px; min-height: 52px; }
+.feel-btn.is-on { border-color: var(--accent); background: var(--surface-2); }
+
+/* ---------- segmented control ---------- */
+
+.segmented {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  margin: 4px 0 12px;
+  background: var(--surface-2);
+  border-radius: var(--radius);
+}
+
+.segmented button {
+  flex: 1;
+  min-height: 44px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: none;
+  color: var(--text-dim);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.segmented button.is-on {
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.18);
+}
+
+/* ---------- guide prose ---------- */
+
+.prose p {
+  margin: 0 0 14px;
+  color: var(--text-dim);
+  line-height: 1.62;
+  font-size: 15px;
+}
+
+.prose p:first-child {
+  color: var(--text);
+  font-size: 16px;
+}
+
+/* ---------- watch queue ---------- */
+
+.progress-bar {
+  height: 6px;
+  border-radius: 3px;
+  background: var(--surface-2);
+  overflow: hidden;
+}
+
+.progress-bar span {
+  display: block;
+  height: 100%;
+  background: var(--success);
+  transition: width 0.3s ease;
+}
+
+/*
+  Instagram's embed is a fixed-ratio iframe. Give it a box rather than letting
+  it decide, or it reflows the whole page when it loads.
+*/
+.reel-embed {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 9 / 14;
+  max-height: 60vh;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--surface-2);
+}
+
+.reel-embed iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.banner-ok {
+  background: color-mix(in srgb, var(--success) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--success) 40%, transparent);
+  color: var(--text);
+  padding: 10px 12px;
+  border-radius: var(--radius);
+  margin: 12px 0;
+  font-size: 14px;
+}
+
+/* ---------- exercise figures ---------- */
+
+:root {
+  --figure-ink: var(--text);
+  --figure-ghost: var(--text-faint);
+  --figure-kit: var(--text-dim);
+  --figure-arrow: var(--accent);
+  --figure-floor: var(--border);
+}
+
+.exercise-figure {
+  margin: 10px 0;
+  padding: 8px;
+  background: var(--surface-2);
+  border-radius: var(--radius);
+}
+
+.exercise-figure svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.exercise-figure figcaption {
+  display: flex;
+  gap: 14px;
+  justify-content: center;
+  font-size: 11px;
+  color: var(--text-faint);
+  margin-top: 2px;
+}
+
+.fig-key { display: inline-flex; align-items: center; gap: 5px; }
+
+.fig-key i {
+  width: 14px;
+  height: 0;
+  border-top: 3px solid var(--figure-ink);
+  border-radius: 2px;
+}
+
+.fig-key i.ghost {
+  border-top-style: dashed;
+  border-color: var(--figure-ghost);
+}
+
+.fig-fault {
+  margin: 6px 0 0;
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--warn);
+}
+
+/* In the flow player the figure sits on the page background, not a card. */
+.flow .exercise-figure { background: none; padding: 0; margin: 0; }
+.flow .exercise-figure figcaption { display: none; }
+.flow .fig-fault { display: none; }
