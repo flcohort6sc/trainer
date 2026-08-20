@@ -157,37 +157,30 @@ expose, and what a fresh install would actually do:
    deliberate decision if it ever goes public.
 2. **Repo visibility** — settled for now: private. See the hosting section.
 
-## Next: put it on a host
+## Live
 
-**The repository now exists**: `flcohort6sc/trainer`, **private**, `main`
-pushed. `.github/workflows/deploy.yml` builds from source, runs the tests first,
-and publishes `dist/` — it is committed and will run the moment a Pages source
-is selected. `dist` stays gitignored so what gets published is always what the
-tests ran against.
+**https://flcohort6sc.github.io/trainer/**
 
-**The blocker is the plan, not the code.** GitHub Pages is not available for
-private repositories on this account — confirmed by asking the API, which
-answered *"Your current plan does not support GitHub Pages for this
-repository."* So hosting on Pages means making the repo public.
+Repo: `flcohort6sc/trainer`, **public** (made public on 2026-08-20 so Pages
+would work — it is not available for private repos on this plan). Pages builds
+from `.github/workflows/deploy.yml`, which **runs the test suite before it
+deploys**, so a broken engine never reaches the phone. `dist` stays gitignored;
+what is published is always built from source.
 
-Toni chose on 2026-08-20 to **stay private and decide hosting later**. Do not
-flip the repository to public without asking again — that decision publishes
-285 caption excerpts and their creator handles, and it is not reversible in any
-way that matters once GitHub has indexed it.
+Verified on the live site: the service worker registers at scope `/trainer/`,
+all ten shell files cache under the subpath, and the page comes back controlled
+by the worker on a second visit. `base: './'` is what makes the subpath work —
+do not "tidy" it to `/`.
 
-The three ways forward, when it comes up again:
+To deploy: push to `main`. To deploy without a change: `gh workflow run deploy.yml`.
 
-1. **Public + Pages.** One command, free, immediate. Exposes the excerpts and
-   handles; exposes none of Toni's training data, which never leaves the browser.
-2. **Private + an external host.** Cloudflare Pages and Netlify both deploy from
-   a private GitHub repo on their free tiers. The built bundle is still
-   downloadable from whatever public URL it gets, so the excerpts travel either
-   way — what stays unindexed is the readable source. Needs Toni to connect the
-   account; not something to do on their behalf.
-3. **A paid GitHub plan**, which makes Pages work on the private repo as is.
+**What being public means.** The repo carries 285 reel caption excerpts and their
+creator handles. It carries none of your training data — that has never left the
+browser and never touches the server. There is no LICENSE file, so it is all
+rights reserved by default; that is now a deliberate thing to revisit rather
+than an oversight.
 
-Then the phone steps, which are Toni's: open the site in Safari, Share → **Add
-to Home Screen**.
+Next, and yours: open the site in Safari and use Share → **Add to Home Screen**.
 
 **Honest limits to know before installing:**
 
