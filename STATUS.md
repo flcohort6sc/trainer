@@ -152,31 +152,42 @@ expose, and what a fresh install would actually do:
 
 ### Still yours to decide before it goes public
 
-1. **A licence.** There is no LICENSE file. The code is yours; the exercise
-   descriptions are written here from what was seen; the caption excerpts are
-   other people's, quoted with attribution and a link. Worth a deliberate choice
-   rather than a default.
-2. **Repo visibility.** Nothing in it is secret, and all training data stays in
-   the browser — but the excerpts and creator handles are in the source either
-   way, so a private repo with Pages on a paid plan is the more conservative
-   option.
+1. **A licence.** There is no LICENSE file, which means all rights reserved by
+   default. That is the right answer while the repo is private; it only needs a
+   deliberate decision if it ever goes public.
+2. **Repo visibility** — settled for now: private. See the hosting section.
 
 ## Next: put it on a host
 
-Everything that can be prepared without a repository is prepared.
-`.github/workflows/deploy.yml` builds from source, runs the tests first, and
-publishes `dist/` to Pages — `dist` stays gitignored so the published build is
-always the one the tests ran against. It does nothing until a repo exists.
+**The repository now exists**: `flcohort6sc/trainer`, **private**, `main`
+pushed. `.github/workflows/deploy.yml` builds from source, runs the tests first,
+and publishes `dist/` — it is committed and will run the moment a Pages source
+is selected. `dist` stays gitignored so what gets published is always what the
+tests ran against.
 
-What is left:
+**The blocker is the plan, not the code.** GitHub Pages is not available for
+private repositories on this account — confirmed by asking the API, which
+answered *"Your current plan does not support GitHub Pages for this
+repository."* So hosting on Pages means making the repo public.
 
-- `git init` — this is **still not a repository**.
-- Decide the licence and the visibility (see above).
-- Push with `gh` at `~/.local/bin/gh`, then Settings → Pages → Source: **GitHub
-  Actions**. All training data lives in the browser, so the repo carries no
-  history of yours.
-- Then the phone steps, which are yours: open the site in Safari, Share → **Add
-  to Home Screen**.
+Toni chose on 2026-08-20 to **stay private and decide hosting later**. Do not
+flip the repository to public without asking again — that decision publishes
+285 caption excerpts and their creator handles, and it is not reversible in any
+way that matters once GitHub has indexed it.
+
+The three ways forward, when it comes up again:
+
+1. **Public + Pages.** One command, free, immediate. Exposes the excerpts and
+   handles; exposes none of Toni's training data, which never leaves the browser.
+2. **Private + an external host.** Cloudflare Pages and Netlify both deploy from
+   a private GitHub repo on their free tiers. The built bundle is still
+   downloadable from whatever public URL it gets, so the excerpts travel either
+   way — what stays unindexed is the readable source. Needs Toni to connect the
+   account; not something to do on their behalf.
+3. **A paid GitHub plan**, which makes Pages work on the private repo as is.
+
+Then the phone steps, which are Toni's: open the site in Safari, Share → **Add
+to Home Screen**.
 
 **Honest limits to know before installing:**
 
