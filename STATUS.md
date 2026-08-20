@@ -157,14 +157,22 @@ expose, and what a fresh install would actually do:
    deliberate decision if it ever goes public.
 2. **Repo visibility** — settled for now: private. See the hosting section.
 
-**Poses written per exercise, not per pattern.** 201 of 330 figures now carry
-their own start/end (and sometimes mid) pose, view angle, props and fault note —
-**163 of the 168 gym movements**. Written after measuring: an audit found 14
-figures whose start and end were identical, so an ab wheel rollout, a psoas
-march and three carries were drawing a person standing still. `[F4]` now fails
-the build if any figure freezes that should not. **Still on pattern defaults:
-mobility (64), stretch (35), conditioning (15), running (10)** — the daily
-routine drills are the next batch.
+**Every figure is posed by hand: 330 of 330.** Each carries its own start/end
+(and where the path is not a straight line, a mid) pose, camera angle, props,
+and — for 285 of them — the one thing most commonly done wrong. No exercise
+inherits a generic pattern default any more.
+
+Written from each drill's own cues rather than its name, and driven by
+measurement: an audit of start-to-end travel found figures whose two ends were
+identical, so an ab wheel rollout, a psoas march and three carries were drawing
+a person standing still. `[F4]` fails the build if any figure freezes that
+should not, with an allowlist for the ones that genuinely are held. The metric
+counts the head and the toes, because a chin tuck and a calf pump move nothing
+else.
+
+The mobility and stretch drills got the most care of the lot: they run in the
+morning and evening routines, so they are the most-looked-at pictures in the
+app.
 
 **Figures are bodies, and they show you the muscles.** Solid articulated
 limbs and a real trunk rather than a stick man, with each exercise's declared

@@ -126,6 +126,12 @@ export default function Figure({
   const ghostSkeleton = applyBase(build(spec.start, spec.start), spec.start.base)
   const p = (v: { x: number; y: number; z: number }) => project(v, view)
 
+  // Lowest thing the body has touching down, in projected space.
+  const groundY = Math.max(
+    ...[live.left, live.right].flatMap((side) => [p(side.toe).y, p(side.ankle).y, p(side.hand).y]),
+    p(live.head).y,
+  ) + 3
+
   function onPointerDown(e: React.PointerEvent<SVGSVGElement>) {
     drag.current = { x: e.clientX, view }
     e.currentTarget.setPointerCapture(e.pointerId)
@@ -147,10 +153,17 @@ export default function Figure({
         onPointerCancel={() => { drag.current = null }}
         style={{ touchAction: 'pan-y', cursor: 'ew-resize' }}
       >
-        <line x1="-40" y1="176" x2="240" y2="176" stroke="var(--figure-floor)" strokeWidth="2" />
-        {/* Anchors the body to the ground instead of leaving it hovering. */}
+        {/*
+          The floor is drawn where the body actually is.
+          Standing poses are grounded to a fixed line by the geometry, but a
+          lying or hanging pose is positioned by hand — so a fixed line left
+          floor drills hovering above their own ground. Taking the lowest point
+          of the figure puts the two together for every pose without having to
+          re-tune a hundred of them.
+        */}
+        <line x1="-60" y1={groundY} x2="260" y2={groundY} stroke="var(--figure-floor)" strokeWidth="2" />
         <ellipse
-          cx={project(live.pelvis, view).x} cy={176}
+          cx={project(live.pelvis, view).x} cy={groundY}
           rx={26} ry={4}
           fill="var(--figure-ink)" opacity={0.18}
         />

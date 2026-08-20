@@ -1162,15 +1162,25 @@ console.log('\n[F4] No figure is accidentally frozen')
  * march and three carries were all inheriting a plank. Measured rather than
  * eyeballed, across both sides, because unilateral work only moves one of them.
  */
-const HELD_ON_PURPOSE = ['Plank', 'Passive Bar Hang', 'Side Plank', 'Support Hold', 'Hollow Body Hold']
+/*
+ * Held, or genuinely tiny. A chin tuck moves the head about a centimetre and
+ * that is the drill -- exaggerating it to satisfy a threshold would be drawing
+ * a different exercise.
+ */
+const HELD_ON_PURPOSE = [
+  'Plank', 'Passive Bar Hang', 'Side Plank', 'Support Hold', 'Hollow Body Hold',
+  'Chin Tuck',
+]
 const travelOf = (ex: typeof data.exercises[number]) => {
   const spec = figureFor(ex)
   if (!spec) return -1
   const a = build(spec.start, spec.start)
   const b = build(spec.end, spec.start)
   let d = Math.abs(a.pelvis.y - b.pelvis.y) + Math.abs(a.shoulders.x - b.shoulders.x)
+  // The head and the toes count: a chin tuck and a calf pump move nothing else.
+  d += Math.abs(a.head.x - b.head.x) + Math.abs(a.head.y - b.head.y) + Math.abs(a.head.z - b.head.z)
   for (const side of ['left', 'right'] as const) {
-    for (const k of ['hand', 'knee', 'ankle', 'elbow'] as const) {
+    for (const k of ['hand', 'knee', 'ankle', 'elbow', 'toe'] as const) {
       d += Math.abs(a[side][k].x - b[side][k].x)
         + Math.abs(a[side][k].y - b[side][k].y)
         + Math.abs(a[side][k].z - b[side][k].z)
