@@ -1155,6 +1155,38 @@ check('a heavy squat slot is never filled with a conditioning station',
   conditioningInHeavy.length === 0,
   conditioningInHeavy.map((e) => e.name).join(', '))
 
+console.log('\n[F4] No figure is accidentally frozen')
+/*
+ * A figure whose start and end are the same draws a person standing still,
+ * which for most exercises is simply wrong -- an ab wheel rollout, a psoas
+ * march and three carries were all inheriting a plank. Measured rather than
+ * eyeballed, across both sides, because unilateral work only moves one of them.
+ */
+const HELD_ON_PURPOSE = ['Plank', 'Passive Bar Hang', 'Side Plank', 'Support Hold', 'Hollow Body Hold']
+const travelOf = (ex: typeof data.exercises[number]) => {
+  const spec = figureFor(ex)
+  if (!spec) return -1
+  const a = build(spec.start, spec.start)
+  const b = build(spec.end, spec.start)
+  let d = Math.abs(a.pelvis.y - b.pelvis.y) + Math.abs(a.shoulders.x - b.shoulders.x)
+  for (const side of ['left', 'right'] as const) {
+    for (const k of ['hand', 'knee', 'ankle', 'elbow'] as const) {
+      d += Math.abs(a[side][k].x - b[side][k].x)
+        + Math.abs(a[side][k].y - b[side][k].y)
+        + Math.abs(a[side][k].z - b[side][k].z)
+    }
+  }
+  return d
+}
+
+const frozen = data.exercises
+  .filter((e) => !e.archived && e.pattern !== 'swim' && e.pattern !== 'protocol')
+  .filter((e) => figureFor(e))
+  .filter((e) => travelOf(e) < 12)
+  .filter((e) => !HELD_ON_PURPOSE.includes(e.name))
+
+check('every figure that should move, moves', frozen.length === 0,
+  frozen.map((e) => e.name).join(', '))
 // ---------------------------------------------------------------- summary
 console.log(`\n${'='.repeat(52)}`)
 console.log(`${pass} passed, ${fail} failed`)

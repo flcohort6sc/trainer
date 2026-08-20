@@ -157,6 +157,15 @@ expose, and what a fresh install would actually do:
    deliberate decision if it ever goes public.
 2. **Repo visibility** — settled for now: private. See the hosting section.
 
+**Poses written per exercise, not per pattern.** 201 of 330 figures now carry
+their own start/end (and sometimes mid) pose, view angle, props and fault note —
+**163 of the 168 gym movements**. Written after measuring: an audit found 14
+figures whose start and end were identical, so an ab wheel rollout, a psoas
+march and three carries were drawing a person standing still. `[F4]` now fails
+the build if any figure freezes that should not. **Still on pattern defaults:
+mobility (64), stretch (35), conditioning (15), running (10)** — the daily
+routine drills are the next batch.
+
 **Figures are bodies, and they show you the muscles.** Solid articulated
 limbs and a real trunk rather than a stick man, with each exercise's declared
 `primaryMuscles` lit brightly and `secondaryMuscles` faintly — mapped onto the

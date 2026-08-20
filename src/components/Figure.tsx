@@ -369,6 +369,25 @@ function Props({ s, project: p, list }: { s: Skeleton; project: Proj; list: Figu
   const rh = p(s.right.hand)
   const mid = { x: (lh.x + rh.x) / 2, y: (lh.y + rh.y) / 2 }
 
+  /*
+   * A bench has to be under the person, wherever the person is.
+   *
+   * It used to be a rectangle at fixed coordinates, which put it floating above
+   * a supine figure like a shelf. Now it runs along the torso and sits on the
+   * side away from the hands — which is under your back when you are pressing,
+   * and under your thighs when you are seated.
+   */
+  const sh = p(s.shoulders)
+  const pv = p(s.pelvis)
+  const axis = { x: pv.x - sh.x, y: pv.y - sh.y }
+  const len = Math.hypot(axis.x, axis.y) || 1
+  const unit = { x: axis.x / len, y: axis.y / len }
+  const perp = { x: -unit.y, y: unit.x }
+  const handSide = Math.sign((mid.x - sh.x) * perp.x + (mid.y - sh.y) * perp.y) || 1
+  const off = -handSide * 13
+  const benchA = { x: sh.x + perp.x * off - unit.x * 14, y: sh.y + perp.y * off - unit.y * 14 }
+  const benchB = { x: pv.x + perp.x * off + unit.x * 30, y: pv.y + perp.y * off + unit.y * 30 }
+
   return (
     <g>
       {list.includes('barbell') && (
@@ -393,7 +412,10 @@ function Props({ s, project: p, list }: { s: Skeleton; project: Proj; list: Figu
       {list.includes('band') && (
         <line x1={mid.x} y1={mid.y} x2={mid.x} y2="176" stroke={kit} strokeWidth="2" strokeDasharray="4 4" />
       )}
-      {list.includes('bench') && <rect x="52" y="120" width="96" height="7" rx="3" fill="none" stroke={kit} strokeWidth="3" />}
+      {list.includes('bench') && (
+        <line x1={benchA.x} y1={benchA.y} x2={benchB.x} y2={benchB.y}
+          stroke={kit} strokeWidth="7" strokeLinecap="round" opacity="0.85" />
+      )}
       {list.includes('box') && <rect x="118" y="146" width="46" height="30" rx="3" fill="none" stroke={kit} strokeWidth="3" />}
       {list.includes('wall') && <line x1="176" y1="30" x2="176" y2="176" stroke={kit} strokeWidth="3" />}
     </g>
