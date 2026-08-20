@@ -1108,6 +1108,22 @@ for (const id of ['is-lat-raise', 'is-band-pullapart', 'ig-st-miniband-abduction
   check(`${ex.name} is viewed from somewhere you can see that`, (spec.view ?? 0) > 40, `view ${spec.view}°`)
 }
 
+console.log('\n[M1] You can turn the randomness off')
+const varied: AppData = { ...data, settings: { ...data.settings, pickBest: undefined } }
+const fixed: AppData = { ...data, settings: { ...data.settings, pickBest: true } }
+
+// Ten generations of the same day. With picking on, they should be identical.
+const runs = Array.from({ length: 10 }, () => generateSession(dayA, fixed).entries.map((e) => e.exercise.id).join(','))
+check('deterministic mode gives the same session every time', new Set(runs).size === 1,
+  `${new Set(runs).size} distinct results from 10 runs`)
+
+const wild = Array.from({ length: 10 }, () => generateSession(dayA, varied).entries.map((e) => e.exercise.id).join(','))
+check('and the normal mode still varies', new Set(wild).size > 1,
+  `${new Set(wild).size} distinct results from 10 runs`)
+
+check('the deterministic session is still a legal session',
+  generateSession(dayA, fixed).unfilled.length === 0)
+
 // ---------------------------------------------------------------- summary
 console.log(`\n${'='.repeat(52)}`)
 console.log(`${pass} passed, ${fail} failed`)

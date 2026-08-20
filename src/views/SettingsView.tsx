@@ -160,6 +160,24 @@ export default function SettingsView() {
         </div>
 
         <div className="field">
+          <label className="check-row">
+            <input
+              type="checkbox"
+              checked={Boolean(s.pickBest)}
+              onChange={(e) => updateSettings({ pickBest: e.target.checked || undefined })}
+            />
+            <span>
+              Stop surprising me
+              <span className="faint" style={{ display: 'block' }}>
+                Always take the best-scoring exercise for each slot instead of choosing from the
+                top few. Generate becomes repeatable: the same history gives you the same session.
+                You can still swap any pick by hand.
+              </span>
+            </span>
+          </label>
+        </div>
+
+        <div className="field">
           <label htmlFor="maxdiff">Maximum difficulty</label>
           <select
             id="maxdiff"
@@ -238,6 +256,16 @@ export default function SettingsView() {
         />
 
         {importMsg && <p className="faint" style={{ marginTop: 10 }}>{importMsg}</p>}
+      </div>
+
+      <div className="card">
+        <h3>Show the welcome again</h3>
+        <p className="faint">
+          The four setup questions, and what this app is. Changes nothing on its own.
+        </p>
+        <button className="btn btn-block" onClick={() => updateSettings({ onboarded: false })}>
+          Open the welcome screen
+        </button>
       </div>
 
       <div className="card">

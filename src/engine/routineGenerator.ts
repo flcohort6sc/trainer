@@ -79,7 +79,7 @@ function fill(
   if (pool.length === 0) return { reason: blockReason ?? 'no eligible exercise' }
 
   const scored = scorePool(pool, data, NO_FATIGUE, ROUTINE_ROLE, usage)
-  const chosen = pick(scored, step.rotation)
+  const chosen = pick(scored, step.rotation, data.settings.pickBest)
 
   return {
     step,

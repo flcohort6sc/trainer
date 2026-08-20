@@ -6,6 +6,7 @@ import { repsToSeconds, formatDistance } from '../engine/progression'
 import { estimateMinutes, fuellingFor } from '../engine/fuelling'
 import { routineStreak } from '../engine/coach'
 import { planWeek } from '../engine/week'
+import BuildSession from './BuildSession'
 import Figure from '../components/Figure'
 import { figureFor } from '../data/figures'
 import type { DayTemplate, Program } from '../types'
@@ -102,6 +103,7 @@ export default function Today({
     todaysPlan?.dayTemplateId ?? data.programs[0]?.days[0]?.id ?? '',
   )
   const [overriding, setOverriding] = useState(false)
+  const [building, setBuilding] = useState(false)
   const [plan, setPlan] = useState<GenerationResult | null>(null)
   const [swapFor, setSwapFor] = useState<number | null>(null)
 
@@ -162,6 +164,10 @@ export default function Today({
     if (!day || !plan) return
     startSession(toSession(day, programId, plan))
     goToLog()
+  }
+
+  if (building) {
+    return <BuildSession onStarted={() => { setBuilding(false); goToLog() }} onCancel={() => setBuilding(false)} />
   }
 
   if (activeSession) {
@@ -238,6 +244,9 @@ export default function Today({
 
       <button className="btn btn-primary btn-block" onClick={generate} disabled={!day}>
         {plan ? '🎲 Regenerate' : '⚡ Generate session'}
+      </button>
+      <button className="btn btn-block" style={{ marginTop: 8 }} onClick={() => setBuilding(true)}>
+        ✋ Pick the exercises myself
       </button>
 
       {plan && (

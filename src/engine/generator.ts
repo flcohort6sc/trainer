@@ -360,7 +360,18 @@ export function scorePool(
  * Step 3: pick. Weighted random over the top candidates rather than always
  * taking the best -- otherwise the "adaptive" program is perfectly predictable.
  */
-export function pick(scored: Scored[], rotation: Slot['rotation']): Scored {
+export function pick(scored: Scored[], rotation: Slot['rotation'], deterministic = false): Scored {
+  /*
+   * Deterministic mode: take the top score and stop.
+   *
+   * The randomness below is what stops an adaptive program being perfectly
+   * predictable, and predictability is exactly what some people want. With
+   * this on, Generate becomes a pure function of your history -- same inputs,
+   * same session -- which is the difference between a tool you direct and one
+   * that surprises you.
+   */
+  if (deterministic) return scored[0]
+
   if (rotation === 'rotate') {
     // The freshest option wins -- but "freshest" is usually a tie. Anything you
     // have not touched in longer than the rotation window scores identically at
@@ -420,7 +431,7 @@ export function generateSession(
     }
 
     const scored = scorePool(pool, data, fatigue, slot.role, usage)
-    const chosen = pick(scored, slot.rotation)
+    const chosen = pick(scored, slot.rotation, data.settings.pickBest)
     used.add(chosen.exercise.id)
 
     entries.push({

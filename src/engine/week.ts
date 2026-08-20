@@ -143,6 +143,12 @@ function nextDayOf(program: Program, data: AppData): string | undefined {
   return oldest?.id
 }
 
+/** The focus line the program itself wrote for that day, if it wrote one. */
+function dayFocus(program: Program | undefined, dayId: string | undefined): string | undefined {
+  const day = program?.days.find((d) => d.id === dayId)
+  return day?.focus ?? day?.name?.toLowerCase()
+}
+
 function findProgram(data: AppData, id: string): Program | undefined {
   return data.programs.find((p) => p.id === id && !p.archived)
 }
@@ -209,7 +215,9 @@ export function planWeek(data: AppData, now = Date.now()): WeekPlan {
           ? 'Hyrox is half strength — this stays at three days'
           : goal?.kind === 'marathon' && phase !== 'base'
             ? 'kept at maintenance so the long runs stay fresh'
-            : 'full-body strength',
+            // Say what the day actually is rather than assuming full body --
+            // the program might be a Push/Pull/Legs split.
+            : (gymProgram ? dayFocus(gymProgram, nextDayOf(gymProgram, data)) : undefined) ?? 'strength work',
       programId: gymProgram?.id,
       dayTemplateId: gymProgram ? nextDayOf(gymProgram, data) : undefined,
       placeId: 'place-gym',

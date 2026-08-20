@@ -6,6 +6,7 @@ import Log from './views/Log'
 import Library from './views/Library'
 import Progress from './views/Progress'
 import SettingsView from './views/SettingsView'
+import Welcome from './views/Welcome'
 import { currentPlace, withPlace } from './engine/places'
 
 /**
@@ -36,6 +37,17 @@ function Shell() {
   const [pendingRoutineId, setPendingRoutineId] = useState<string | undefined>()
   const { activeSession, data, updateSettings } = useStore()
   const place = currentPlace(data.settings)
+
+  // First run: the front door, and the four questions the app cannot guess.
+  // It renders instead of everything else, tab bar included — there is nothing
+  // to navigate to yet.
+  if (!data.settings.onboarded) {
+    return (
+      <main className="app-main">
+        <Welcome onDone={() => updateSettings({ onboarded: true })} />
+      </main>
+    )
+  }
 
   function openRoutine(id: string) {
     setPendingRoutineId(id)

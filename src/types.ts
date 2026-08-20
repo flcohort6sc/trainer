@@ -451,12 +451,28 @@ export interface Settings {
   currentPlaceId?: string
   /** 0 = always give me the same exercises, 1 = maximum variety. */
   varietyBias: number
+  /**
+   * Take the best-scoring exercise for every slot instead of choosing at
+   * random from the top few.
+   *
+   * The weighted-random pick is what stops an "adaptive" program being
+   * perfectly predictable — but predictable is exactly what some people want,
+   * and being handed something you did not choose is the most common reason to
+   * stop trusting a generator. With this on, Generate is a pure function of
+   * your history: same inputs, same session, every time.
+   */
+  pickBest?: boolean
   /** Days before an exercise is considered "fresh" again. */
   rotationWindowDays: number
   maxDifficulty: 1 | 2 | 3
   weeklyShape: WeeklyShape
   /** Which program the week planner books your gym days from. */
   activeProgramId?: string
+  /**
+   * The welcome screen has been dealt with. Absent means a fresh install, which
+   * is exactly when it should appear.
+   */
+  onboarded?: boolean
   /** Empty most of the time. See Niggle. */
   niggles: Niggle[]
 }
