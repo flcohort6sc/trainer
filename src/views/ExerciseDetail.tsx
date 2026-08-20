@@ -103,6 +103,28 @@ export default function ExerciseDetail({
         </p>
       )}
 
+      {/*
+        The honest escape hatch.
+
+        The figure shows the range, the muscles and the joint positions, and
+        that is genuinely all a generated silhouette can do — it will never
+        beat somebody demonstrating it. Rather than pretend otherwise, every
+        exercise offers a way to go and watch one. It needs a network, which is
+        the only part of this app that does.
+      */}
+      {!shortcode && (
+        <p style={{ margin: '12px 0' }}>
+          <a
+            href={`https://www.youtube.com/results?search_query=${encodeURIComponent(`${exercise.name} form technique`)}`}
+            target="_blank"
+            rel="noreferrer"
+          >
+            Watch someone do it ↗
+          </a>
+          <span className="faint"> — opens a search; needs a connection</span>
+        </p>
+      )}
+
       {shortcode && !embedFailed && (
         <>
           <h2>Where it came from</h2>

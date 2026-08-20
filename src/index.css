@@ -33,8 +33,10 @@
 
 @media (prefers-color-scheme: light) {
   :root:not([data-theme='dark']) {
-    --figure-body: #d8dce3;
-    --muscle-primary: #d9631a;
+    --figure-ink: #10131a;
+    --figure-body: #c3cad6;
+    --figure-body-far: #8c95a5;
+    --muscle-primary: #c2551a;
     --muscle-secondary: #c99a72;
     --bg: #f6f7f9;
     --surface: #ffffff;
@@ -967,10 +969,16 @@ a { color: var(--accent); }
 /* ---------- exercise figures ---------- */
 
 :root {
-  --figure-ink: var(--text);
-  /* Lighter than the card it sits on, or the silhouette reads as an outline
-     drawn around nothing rather than as a body with volume. */
-  --figure-body: #39404f;
+  /*
+    Dark edge, light body -- in BOTH themes.
+    Dark mode had it inverted (white halo around a dark fill), which turned
+    overlapping limbs into fused tubes: a push-up was an unreadable lump. A
+    silhouette reads the way an illustration does, light form against a dark
+    line, whichever way round the page is.
+  */
+  --figure-ink: #0d1017;
+  --figure-body: #aeb6c4;
+  --figure-body-far: #6f7889;
   --figure-ghost: var(--text-faint);
   /* Working muscles. Warm against a cool interface, and distinguishable from
      the accent so a lit muscle is never mistaken for a control. */

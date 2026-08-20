@@ -286,7 +286,10 @@ export function frameFor(
   if (cached) return cached
 
   let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity
-  const view = spec.view ?? 38
+  // Must match Figure's defaultView, or the frame is computed for a camera
+  // angle the figure never uses.
+  const base = spec.start.base ?? spec.end.base
+  const view = spec.view ?? (base === 'supine' || base === 'prone' ? 8 : 34)
 
   for (const t of [0, 0.25, 0.5, 0.75, 1]) {
     const pose = spec.mid

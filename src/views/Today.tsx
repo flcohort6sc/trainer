@@ -351,11 +351,15 @@ function PlannedExercise({
           <ul style={{ margin: '6px 0 0', paddingLeft: 18, fontSize: 13 }} className="dim">
             {exercise.cues.map((c, i) => <li key={i}>{c}</li>)}
           </ul>
-          {exercise.sourceUrl && (
-            <p style={{ margin: '6px 0 0', fontSize: 13 }}>
-              <a href={exercise.sourceUrl} target="_blank" rel="noreferrer">Watch the video ↗</a>
-            </p>
-          )}
+          <p style={{ margin: '6px 0 0', fontSize: 13 }}>
+            <a
+              href={exercise.sourceUrl ?? `https://www.youtube.com/results?search_query=${encodeURIComponent(`${exercise.name} form technique`)}`}
+              target="_blank"
+              rel="noreferrer"
+            >
+              {exercise.sourceUrl ? 'Watch the video ↗' : 'Watch someone do it ↗'}
+            </a>
+          </p>
         </details>
       )}
     </div>

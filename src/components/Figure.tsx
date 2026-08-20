@@ -61,7 +61,21 @@ export interface FigureSpec {
  * and none of the benefit. 38 is far enough to see there are two arms and
  * still square-on enough to read a hinge.
  */
-const DEFAULT_VIEW = 38
+const DEFAULT_VIEW = 34
+
+/**
+ * Where to stand, when the exercise has not said.
+ *
+ * A three-quarter view earns its keep on a standing lift — it shows you there
+ * are two arms. On the floor it is actively worse: a push-up seen at 34 degrees
+ * is a heap, and seen from the side is obviously a push-up. Anything lying down
+ * gets a near-side-on camera unless its figure asks for something else.
+ */
+function defaultView(spec: FigureSpec): number {
+  if (spec.view !== undefined) return spec.view
+  const base = spec.start.base ?? spec.end.base
+  return base === 'supine' || base === 'prone' ? 8 : DEFAULT_VIEW
+}
 const CYCLE_MS = 2600
 
 /** Ease in and out, so the turnaround at each end is not a bounce. */
@@ -83,7 +97,7 @@ export default function Figure({
     typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches
   const [playing, setPlaying] = useState(animate && !reduced)
   const [t, setT] = useState(0)
-  const [view, setView] = useState(spec.view ?? DEFAULT_VIEW)
+  const [view, setView] = useState(defaultView(spec))
   const drag = useRef<{ x: number; view: number } | null>(null)
 
   useEffect(() => {
@@ -109,7 +123,7 @@ export default function Figure({
     : lerpPose(spec.start, spec.end, eased)
 
   const live = applyBase(build(pose, spec.start), pose.base)
-  const ghost = applyBase(build(spec.start, spec.start), spec.start.base)
+  const ghostSkeleton = applyBase(build(spec.start, spec.start), spec.start.base)
   const p = (v: { x: number; y: number; z: number }) => project(v, view)
 
   function onPointerDown(e: React.PointerEvent<SVGSVGElement>) {
@@ -134,12 +148,23 @@ export default function Figure({
         style={{ touchAction: 'pan-y', cursor: 'ew-resize' }}
       >
         <line x1="-40" y1="176" x2="240" y2="176" stroke="var(--figure-floor)" strokeWidth="2" />
+        {/* Anchors the body to the ground instead of leaving it hovering. */}
+        <ellipse
+          cx={project(live.pelvis, view).x} cy={176}
+          rx={26} ry={4}
+          fill="var(--figure-ink)" opacity={0.18}
+        />
 
-        {/* Where it started, so the range of the movement stays visible. */}
-        {!playing && <Body s={ghost} project={p} ghost />}
+        {/*
+          Where it started. A faint outline rather than a second body: two
+          filled silhouettes on top of each other is twice the shape and none
+          of the clarity.
+        */}
+        {!playing && <Body s={ghostSkeleton} project={p} ghost />}
         <Body
           s={live}
           project={p}
+          facing={facingVector(pose)}
           muscles={musclePatches(live, primaryMuscles, secondaryMuscles, pose.facing ?? 0)}
         />
         {spec.props && spec.props.length > 0 && <Props s={live} project={p} list={spec.props} />}
@@ -197,6 +222,20 @@ export default function Figure({
 type Proj = (v: { x: number; y: number; z: number }) => Projected
 
 /**
+ * Which way the body is looking, in world space.
+ *
+ * A lying pose is the standing figure rotated, so the face has to rotate with
+ * it — otherwise a push-up appears to be staring at the ceiling.
+ */
+function facingVector(pose: Pose) {
+  const rad = ((pose.facing ?? 0) * Math.PI) / 180
+  const forward = { x: Math.cos(rad), y: -0.2, z: -Math.sin(rad) }
+  if (pose.base === 'supine') return { x: -forward.y, y: forward.x, z: forward.z }
+  if (pose.base === 'prone') return { x: forward.y, y: -forward.x, z: -forward.z }
+  return forward
+}
+
+/**
  * Limb thickness, so this is a body rather than a diagram of one.
  *
  * Capsules rather than polygons: a thick line with round caps IS a capsule, and
@@ -225,12 +264,14 @@ interface Bone {
  * buried under the limb they belong to.
  */
 function Body({
-  s, project: p, ghost, muscles = [],
+  s, project: p, ghost, muscles = [], facing = { x: 1, y: -0.15, z: 0 },
 }: {
   s: Skeleton
   project: Proj
   ghost?: boolean
   muscles?: MusclePatch[]
+  /** Unit-ish vector pointing out of the front of the head. */
+  facing?: { x: number; y: number; z: number }
 }) {
   const fill = ghost ? 'none' : 'var(--figure-body)'
   const edge = ghost ? 'var(--figure-ghost)' : 'var(--figure-ink)'
@@ -256,9 +297,13 @@ function Body({
   const trunkPoints = trunk.map((q) => `${q.x},${q.y}`).join(' ')
   const head = p(s.head)
   const headR = SEG.head * 1.15 * (1 + head.depth / 900)
+  // A point just in front of the head, projected the same way, so the marker
+  // swings round the skull as the figure turns.
+  const faceRaw = p({ x: s.head.x + facing.x * SEG.head, y: s.head.y + facing.y * SEG.head, z: s.head.z + facing.z * SEG.head })
+  const face = faceRaw.depth > head.depth - 6 ? faceRaw : null
   const scaleOf = (depth: number) => 1 + depth / 900
 
-  const OUTLINE = ghost ? 1.5 : 3
+  const OUTLINE = ghost ? 1.2 : 1.8
 
   return (
     <g opacity={ghost ? 0.4 : 1}>
@@ -282,16 +327,20 @@ function Body({
           const near = Math.max(0, Math.min(1, (b.depth + 16) / 32))
           return (
             <line key={`f-${b.key}`} x1={b.a.x} y1={b.a.y} x2={b.b.x} y2={b.b.y}
-              stroke={ghost ? edge : fill}
+              // A far arm is painted in a different tone, not merely dimmed —
+              // that is what stops it fusing with the chest it crosses.
+              stroke={ghost ? 'none' : near > 0.5 ? fill : 'var(--figure-body-far)'}
               strokeWidth={b.width * scaleOf(b.depth)}
-              strokeDasharray={ghost ? '6 6' : undefined}
-              // Far limbs sit back a little without going transparent enough to
-              // show the limb behind them.
-              opacity={ghost ? 1 : 0.82 + near * 0.18} />
+              opacity={ghost ? 0 : 1} />
           )
         })}
         <circle cx={head.x} cy={head.y} r={headR} fill={fill}
           stroke={ghost ? edge : 'none'} strokeWidth={OUTLINE} strokeDasharray={ghost ? '6 6' : undefined} />
+        {!ghost && face && (
+          /* Which way is this person looking? Without it you cannot tell a
+             push-up from a plank, or a squat from a good morning. */
+          <circle cx={face.x} cy={face.y} r={headR * 0.32} fill={edge} opacity={0.85} />
+        )}
       </g>
 
       {/* 3. the muscles, on top, dimmed when they are round the back */}
