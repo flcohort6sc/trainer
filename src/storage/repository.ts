@@ -8,6 +8,7 @@
  */
 
 import type { AppData, Equipment, Place, Settings } from '../types'
+import { HYROX_EXERCISES } from '../data/hyroxExercises'
 import { SEED_ENDURANCE } from '../data/seedEndurance'
 import { SEED_EXERCISES } from '../data/seedExercises'
 import { SEED_MOBILITY } from '../data/seedMobility'
@@ -18,12 +19,12 @@ import { SEED_ROUTINES } from '../data/seedRoutines'
 import { SEED_SAUNA } from '../data/seedSauna'
 
 const STORAGE_KEY = 'trainer.data.v1'
-const CURRENT_VERSION = 6
+const CURRENT_VERSION = 7
 
 /** Everything that ships in the box. */
 const ALL_SEED_EXERCISES = [
   ...SEED_EXERCISES, ...SEED_MOBILITY, ...SEED_ENDURANCE, ...SEED_SAUNA,
-  ...REEL_EXERCISES,
+  ...REEL_EXERCISES, ...HYROX_EXERCISES,
 ]
 
 /**
@@ -246,6 +247,18 @@ const MIGRATIONS: Record<number, (d: AppData) => AppData> = {
       niggles: d.settings.niggles ?? [],
     },
   }),
+
+  /**
+   * v6 -> v7: the Hyrox stations, their honest substitutes, and enough
+   * squatting, lunging, carrying and pulling to stop those patterns being thin.
+   *
+   * Additive, and only ids that could not have existed before — so anything you
+   * deleted stays deleted.
+   */
+  6: (d) => {
+    const have = new Set(d.exercises.map((e) => e.id))
+    return { ...d, exercises: [...d.exercises, ...HYROX_EXERCISES.filter((e) => !have.has(e.id))] }
+  },
 }
 
 export function load(): AppData {

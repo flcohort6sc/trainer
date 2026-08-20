@@ -8,12 +8,12 @@ what the next session should pick up.
 
 | | |
 |---|---|
-| Exercises | **330** (146 traced to Instagram reels) |
+| Exercises | **353** (146 from reels, 23 Hyrox + gym additions) |
 | Routines | 17 |
 | Written guides | 24 (6 on food) |
 | Programs | 6 |
-| Schema | v6 |
-| Tests | 183 passing |
+| Schema | v7 |
+| Tests | 208 passing |
 | Build | clean under `tsc -b` |
 | Install | PWA, boots offline. Not hosted yet |
 
@@ -157,6 +157,33 @@ expose, and what a fresh install would actually do:
    deliberate decision if it ever goes public.
 2. **Repo visibility** — settled for now: private. See the hosting section.
 
+**Figures are 3D and they move.** `components/figureGeometry.ts` builds the
+skeleton in three dimensions and projects it by hand — no WebGL, +1.6KB. Both
+limbs, depth-sorted, turnable by dragging, and playable or scrubbable through
+the rep. The motion interpolates the start and end poses that were always in
+the data; **no trajectory is invented**. Two modelling bugs found by writing
+tests for it: abduction has to be applied *before* flexion (rotating a limb
+about the forward axis does nothing to an arm already held out in front, which
+is why a band pull-apart did not move), and the two sides only swap depth past
+90°, not at ±38°.
+
+**A front door and a setup.** First run explains what the app is, then asks the
+four things it cannot guess. It is also where **Push/Pull/Legs and Upper/Lower
+finally became reachable** — they had existed since the first version, and Today
+booked from a default nobody was ever asked about.
+
+**Picking things yourself.** "Stop surprising me" in Settings takes the
+best-scoring exercise instead of one of the top few, making Generate repeatable.
+"Pick the exercises myself" on Today builds a session straight from the library
+with no generator involved.
+
+**23 exercises added**, from the Hyrox stations and their honest substitutes to
+the thin patterns (carries went from 3 to 6). Every substitute says in its own
+notes that it is a substitute. Adding them exposed a real classification bug:
+wall balls and thrusters were 'squat', which let a heavy 4×5 slot serve 100 wall
+balls and halved the fatigue model's bias. They are conditioning; there is now a
+test that a heavy primary slot can never be filled with a conditioning station.
+
 ## Live
 
 **https://flcohort6sc.github.io/trainer/**
@@ -214,7 +241,7 @@ Next, and yours: open the site in Safari and use Share → **Add to Home Screen*
    Lumberjack. The review ledger notes which were added under that relaxed bar.
 5. **Bundle is ~217KB gzipped.** Was 249KB before the captions were excerpted.
    Fine for a PWA that caches once.
-6. **`engine-test.ts` has no per-test runner.** Fine at 183 assertions and ~2s.
+6. **`engine-test.ts` has no per-test runner.** Fine at 208 assertions and ~2s.
 
 ## Files that are not in this repo
 

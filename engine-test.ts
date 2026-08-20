@@ -3,6 +3,7 @@
  * shuffle? Runs against the real seed data, no UI involved.
  */
 
+import { HYROX_EXERCISES } from './src/data/hyroxExercises'
 import { SEED_ENDURANCE } from './src/data/seedEndurance'
 import { SEED_EXERCISES } from './src/data/seedExercises'
 import { SEED_MOBILITY } from './src/data/seedMobility'
@@ -17,7 +18,7 @@ import { applyBase, build, lerpPose, project } from './src/components/figureGeom
 import { LESSONS, TOPIC_LABEL } from './src/data/lessons'
 import { SEED_PROGRAMS } from './src/data/seedPrograms'
 import { SEED_ROUTINES } from './src/data/seedRoutines'
-import { buildUsageIndex, generateSession, toSession } from './src/engine/generator'
+import { buildUsageIndex, eligibleFor, generateSession, toSession } from './src/engine/generator'
 import { generateRoutine, leadRoutineKind, suggestRoutine } from './src/engine/routineGenerator'
 import { routineStreak, weeklyReview } from './src/engine/coach'
 import { goalConflicts, goalStatus, phaseFor, primaryGoal } from './src/engine/goals'
@@ -29,7 +30,7 @@ import type { AppData, Equipment, Routine, RoutineLog, Session, Slot, DayTemplat
 
 const data: AppData = {
   version: 4,
-  exercises: [...SEED_EXERCISES, ...SEED_MOBILITY, ...SEED_ENDURANCE, ...SEED_SAUNA, ...REEL_EXERCISES],
+  exercises: [...SEED_EXERCISES, ...SEED_MOBILITY, ...SEED_ENDURANCE, ...SEED_SAUNA, ...REEL_EXERCISES, ...HYROX_EXERCISES],
   programs: SEED_PROGRAMS,
   routines: SEED_ROUTINES,
   reels: REEL_SOURCES,
@@ -200,7 +201,7 @@ const mixedDay: DayTemplate = { id: 'test-day', name: 'test', slots: [mixedSlot]
 let hingeCount = 0
 for (let i = 0; i < 40; i++) {
   const p = generateSession(mixedDay, fatigued)
-  const ex = SEED_EXERCISES.find((e) => e.id === p.entries[0].exercise.id)!
+  const ex = data.exercises.find((e) => e.id === p.entries[0].exercise.id)!
   if (ex.pattern === 'hinge') hingeCount++
 }
 console.log(`      after 3 quad-heavy days, picked a hinge ${hingeCount}/40 times`)
@@ -1123,6 +1124,36 @@ check('and the normal mode still varies', new Set(wild).size > 1,
 
 check('the deterministic session is still a legal session',
   generateSession(dayA, fixed).unfilled.length === 0)
+
+console.log('\n[H1] The Hyrox stations, and what stands in for them')
+const stations = HYROX_EXERCISES.filter((e) => e.tags.includes('station'))
+const subs = HYROX_EXERCISES.filter((e) => e.tags.includes('substitute'))
+check('all eight stations are represented', stations.length === 8,
+  stations.map((e) => e.name).join(', '))
+check('every substitute admits in its notes that it is one',
+  subs.every((e) => /substitute/i.test(e.notes ?? '')),
+  subs.filter((e) => !/substitute/i.test(e.notes ?? '')).map((e) => e.name).join(', '))
+check('the real stations need the kit, so an ordinary gym is never told it trained them',
+  stations.filter((e) => e.equipment.some((q) => ['ski-erg', 'rower', 'sled', 'wall-ball', 'sandbag'].includes(q))).length >= 5,
+  stations.filter((e) => e.equipment.some((q) => ['ski-erg', 'rower', 'sled', 'wall-ball', 'sandbag'].includes(q))).map((e) => e.name).join(', '))
+
+/*
+ * A heavy primary slot must never be served a conditioning station.
+ *
+ * Wall balls and thrusters are squat-shaped, and classifying them as 'squat'
+ * let a "4 x 5-8, 180s rest" slot offer 100 wall balls -- and diluted the
+ * fatigue model, because they are quad-primary and always fresh. Pattern
+ * decides which slots an exercise may fill, so they are conditioning.
+ */
+const heavySlot: Slot = {
+  id: 'heavy', label: 'Lower push (heavy)', role: 'primary',
+  patterns: ['squat'], sets: 4, repRange: [5, 8], restSeconds: 180, rotation: 'rotate',
+}
+const heavyPool = eligibleFor(heavySlot, data, new Set()).pool
+const conditioningInHeavy = heavyPool.filter((e) => e.tags.includes('station') || e.tags.includes('substitute'))
+check('a heavy squat slot is never filled with a conditioning station',
+  conditioningInHeavy.length === 0,
+  conditioningInHeavy.map((e) => e.name).join(', '))
 
 // ---------------------------------------------------------------- summary
 console.log(`\n${'='.repeat(52)}`)
