@@ -23,14 +23,17 @@
 
 import { useEffect, useRef, useState } from 'react'
 import {
-  applyBase, build, lerpPose, project, SEG,
+  applyBase, build, frameFor, lerpPose, project, SEG,
   type Pose, type Projected, type Skeleton,
 } from './figureGeometry'
+import { musclePatches, type MusclePatch } from './figureMuscles'
+import type { Muscle } from '../types'
 
 export type { FigureBase, Pose } from './figureGeometry'
 
 export type FigureProp =
   | 'barbell' | 'dumbbell' | 'kettlebell' | 'bench' | 'box' | 'wall' | 'bar' | 'band' | 'floor'
+  | 'medicine-ball'
 
 export interface FigureSpec {
   start: Pose
@@ -65,12 +68,16 @@ const CYCLE_MS = 2600
 const ease = (t: number) => (1 - Math.cos(t * Math.PI)) / 2
 
 export default function Figure({
-  spec, title, size = 200, animate = true,
+  spec, title, size = 200, animate = true, primaryMuscles = [], secondaryMuscles = [],
 }: {
   spec: FigureSpec
   title: string
   size?: number
   animate?: boolean
+  /** Lit brightly on the body. The same list the fatigue model reads. */
+  primaryMuscles?: Muscle[]
+  /** Lit faintly. */
+  secondaryMuscles?: Muscle[]
 }) {
   const reduced =
     typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -117,7 +124,7 @@ export default function Figure({
   return (
     <figure className="exercise-figure" style={{ maxWidth: size + 60 }}>
       <svg
-        viewBox="0 0 200 200"
+        viewBox={frameFor(spec).viewBox}
         role="img"
         aria-label={`${title}: schematic figure, drag to turn`}
         onPointerDown={onPointerDown}
@@ -126,11 +133,15 @@ export default function Figure({
         onPointerCancel={() => { drag.current = null }}
         style={{ touchAction: 'pan-y', cursor: 'ew-resize' }}
       >
-        <line x1="12" y1="176" x2="188" y2="176" stroke="var(--figure-floor)" strokeWidth="2" />
+        <line x1="-40" y1="176" x2="240" y2="176" stroke="var(--figure-floor)" strokeWidth="2" />
 
         {/* Where it started, so the range of the movement stays visible. */}
         {!playing && <Body s={ghost} project={p} ghost />}
-        <Body s={live} project={p} />
+        <Body
+          s={live}
+          project={p}
+          muscles={musclePatches(live, primaryMuscles, secondaryMuscles, pose.facing ?? 0)}
+        />
         {spec.props && spec.props.length > 0 && <Props s={live} project={p} list={spec.props} />}
       </svg>
 
@@ -167,6 +178,17 @@ export default function Figure({
         {t < 0.02 ? 'start' : t > 0.98 ? 'finish' : 'mid-rep'} · drag the figure to turn it
       </p>
 
+      {(primaryMuscles.length > 0 || secondaryMuscles.length > 0) && (
+        <p className="fig-muscles">
+          {primaryMuscles.map((m) => (
+            <span key={m} className="fig-muscle is-primary">{m}</span>
+          ))}
+          {secondaryMuscles.map((m) => (
+            <span key={m} className="fig-muscle">{m}</span>
+          ))}
+        </p>
+      )}
+
       {spec.fault && <p className="fig-fault">Watch for: {spec.fault}</p>}
     </figure>
   )
@@ -175,57 +197,135 @@ export default function Figure({
 type Proj = (v: { x: number; y: number; z: number }) => Projected
 
 /**
- * One body, drawn far-to-near.
+ * Limb thickness, so this is a body rather than a diagram of one.
  *
- * Painter's algorithm: sort the bones by depth and draw the back ones first,
- * thinner and dimmer. Without it the arms cross the torso at random and the
- * whole thing reads flat however far you turn it.
+ * Capsules rather than polygons: a thick line with round caps IS a capsule, and
+ * the browser draws it for free. A thigh is thicker than a forearm, and both
+ * scale with perspective, which is most of what makes a rotated figure read as
+ * solid.
  */
-function Body({ s, project: p, ghost }: { s: Skeleton; project: Proj; ghost?: boolean }) {
-  const bones: { a: Projected; b: Projected; key: string }[] = []
-  const bone = (a: { x: number; y: number; z: number }, b: typeof a, key: string) =>
-    bones.push({ a: p(a), b: p(b), key })
+const THICK = { thigh: 15, shin: 11, foot: 7, upperArm: 10.5, forearm: 8.5, neck: 9, clav: 8, pelvis: 9 }
 
-  bone(s.pelvis, s.shoulders, 'torso')
-  bone(s.shoulders, s.neckTop, 'neck')
-  for (const [name, side] of [['l', s.left], ['r', s.right]] as const) {
-    bone(side.shoulder, side.elbow, `${name}-uarm`)
-    bone(side.elbow, side.hand, `${name}-farm`)
-    bone(side.hip, side.knee, `${name}-thigh`)
-    bone(side.knee, side.ankle, `${name}-shin`)
-    bone(side.ankle, side.toe, `${name}-foot`)
-    bone(s.pelvis, side.hip, `${name}-pelvis`)
-    bone(s.shoulders, side.shoulder, `${name}-clav`)
+interface Piece {
+  key: string
+  depth: number
+  render: (opacity: number, scale: number) => React.ReactNode
+}
+
+function Body({
+  s, project: p, ghost, muscles = [],
+}: {
+  s: Skeleton
+  project: Proj
+  ghost?: boolean
+  muscles?: MusclePatch[]
+}) {
+  const ink = ghost ? 'var(--figure-ghost)' : 'var(--figure-body)'
+  const edge = ghost ? 'none' : 'var(--figure-ink)'
+  const pieces: Piece[] = []
+
+  const limb = (
+    a: { x: number; y: number; z: number },
+    b: typeof a,
+    width: number,
+    key: string,
+  ) => {
+    const pa = p(a)
+    const pb = p(b)
+    const depth = (pa.depth + pb.depth) / 2
+    pieces.push({
+      key,
+      depth,
+      render: (opacity, scale) => (
+        <g key={key} opacity={opacity}>
+          {!ghost && (
+            <line x1={pa.x} y1={pa.y} x2={pb.x} y2={pb.y}
+              stroke={edge} strokeWidth={width * scale + 2.5} strokeLinecap="round" />
+          )}
+          <line x1={pa.x} y1={pa.y} x2={pb.x} y2={pb.y}
+            stroke={ink} strokeWidth={width * scale} strokeLinecap="round"
+            strokeDasharray={ghost ? '6 6' : undefined} />
+        </g>
+      ),
+    })
   }
 
-  bones.sort((x, y) => (x.a.depth + x.b.depth) / 2 - (y.a.depth + y.b.depth) / 2)
+  // The trunk is a shape, not a stick: shoulders and hips are real widths, so
+  // joining the four corners gives a torso that narrows at the waist.
+  const trunk = [s.left.shoulder, s.right.shoulder, s.right.hip, s.left.hip].map(p)
+  const trunkDepth = trunk.reduce((n, q) => n + q.depth, 0) / 4
+  pieces.push({
+    key: 'trunk',
+    depth: trunkDepth,
+    render: (opacity) => (
+      <polygon
+        key="trunk"
+        points={[trunk[0], trunk[1], trunk[2], trunk[3]].map((q) => `${q.x},${q.y}`).join(' ')}
+        fill={ink}
+        stroke={ghost ? 'var(--figure-ghost)' : 'var(--figure-ink)'}
+        strokeWidth={ghost ? 1.5 : 3}
+        strokeLinejoin="round"
+        strokeDasharray={ghost ? '6 6' : undefined}
+        opacity={opacity}
+      />
+    ),
+  })
+
+  limb(s.shoulders, s.neckTop, THICK.neck, 'neck')
+  for (const [name, side] of [['l', s.left], ['r', s.right]] as const) {
+    limb(side.shoulder, side.elbow, THICK.upperArm, `${name}-uarm`)
+    limb(side.elbow, side.hand, THICK.forearm, `${name}-farm`)
+    limb(side.hip, side.knee, THICK.thigh, `${name}-thigh`)
+    limb(side.knee, side.ankle, THICK.shin, `${name}-shin`)
+    limb(side.ankle, side.toe, THICK.foot, `${name}-foot`)
+  }
+
+  // Muscle patches ride at the same depth as the body they sit on, so a
+  // hamstring is hidden when you look at the figure from the front.
+  for (const [i, m] of muscles.entries()) {
+    const q = p(m.at)
+    pieces.push({
+      key: `m${i}`,
+      // Nudged toward the viewer so a patch is never swallowed by its own limb.
+      depth: q.depth + 3,
+      render: (opacity, scale) => (
+        <circle
+          key={`m${i}`}
+          cx={q.x} cy={q.y} r={m.size * scale}
+          fill={m.primary ? 'var(--muscle-primary)' : 'var(--muscle-secondary)'}
+          opacity={(m.primary ? 0.9 : 0.5) * opacity}
+        />
+      ),
+    })
+  }
+
   const head = p(s.head)
+  pieces.push({
+    key: 'head',
+    depth: head.depth,
+    render: (opacity, scale) => (
+      <circle
+        key="head"
+        cx={head.x} cy={head.y} r={SEG.head * 1.15 * scale}
+        fill={ink}
+        stroke={ghost ? 'var(--figure-ghost)' : 'var(--figure-ink)'}
+        strokeWidth={ghost ? 1.5 : 3}
+        strokeDasharray={ghost ? '6 6' : undefined}
+        opacity={opacity}
+      />
+    ),
+  })
+
+  // Painter's algorithm. Without it the far arm draws over the chest and the
+  // whole thing reads flat however far you turn it.
+  pieces.sort((a, b) => a.depth - b.depth)
 
   return (
-    <g opacity={ghost ? 0.4 : 1}>
-      {bones.map(({ a, b, key }) => {
-        const depth = (a.depth + b.depth) / 2
-        // Behind the midline: thinner, dimmer. In front: full weight.
-        const near = Math.max(0, Math.min(1, (depth + 14) / 28))
-        return (
-          <line
-            key={key}
-            x1={a.x} y1={a.y} x2={b.x} y2={b.y}
-            stroke={ghost ? 'var(--figure-ghost)' : 'var(--figure-ink)'}
-            strokeWidth={(ghost ? 2.6 : 3.4) + near * 1.6}
-            strokeLinecap="round"
-            strokeDasharray={ghost ? '5 5' : undefined}
-            opacity={ghost ? 1 : 0.45 + near * 0.55}
-          />
-        )
+    <g opacity={ghost ? 0.45 : 1}>
+      {pieces.map((piece) => {
+        const near = Math.max(0, Math.min(1, (piece.depth + 16) / 32))
+        return piece.render(ghost ? 1 : 0.55 + near * 0.45, 1 + piece.depth / 900)
       })}
-      <circle
-        cx={head.x} cy={head.y} r={SEG.head * (1 + head.depth / 900)}
-        fill="none"
-        stroke={ghost ? 'var(--figure-ghost)' : 'var(--figure-ink)'}
-        strokeWidth={ghost ? 2.6 : 4}
-        strokeDasharray={ghost ? '5 5' : undefined}
-      />
     </g>
   )
 }
@@ -252,6 +352,9 @@ function Props({ s, project: p, list }: { s: Skeleton; project: Proj; list: Figu
       {list.includes('dumbbell') && [lh, rh].map((h, i) => (
         <line key={i} x1={h.x - 7} y1={h.y} x2={h.x + 7} y2={h.y} stroke={kit} strokeWidth="5" strokeLinecap="round" />
       ))}
+      {list.includes('medicine-ball') && (
+        <circle cx={mid.x} cy={mid.y} r="9" fill="none" stroke={kit} strokeWidth="3" />
+      )}
       {list.includes('kettlebell') && (
         <circle cx={mid.x} cy={mid.y + 7} r="6.5" fill="none" stroke={kit} strokeWidth="3" />
       )}

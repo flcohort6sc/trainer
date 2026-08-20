@@ -58,7 +58,15 @@ export default function ExerciseDetail({
         {' · last done '}{lastDone}
       </p>
 
-      {figure && <Figure spec={figure} title={exercise.name} size={260} />}
+      {figure && (
+        <Figure
+          spec={figure}
+          title={exercise.name}
+          size={260}
+          primaryMuscles={exercise.primaryMuscles}
+          secondaryMuscles={exercise.secondaryMuscles}
+        />
+      )}
 
       <h2>How to do it</h2>
       {exercise.cues.length > 0 ? (

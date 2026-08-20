@@ -33,6 +33,9 @@
 
 @media (prefers-color-scheme: light) {
   :root:not([data-theme='dark']) {
+    --figure-body: #d8dce3;
+    --muscle-primary: #d9631a;
+    --muscle-secondary: #c99a72;
     --bg: #f6f7f9;
     --surface: #ffffff;
     --surface-2: #eef0f4;
@@ -965,7 +968,14 @@ a { color: var(--accent); }
 
 :root {
   --figure-ink: var(--text);
+  /* The body is filled, not drawn in outline, so it needs a fill that reads
+     against both the card and the page. */
+  --figure-body: var(--surface-2);
   --figure-ghost: var(--text-faint);
+  /* Working muscles. Warm against a cool interface, and distinguishable from
+     the accent so a lit muscle is never mistaken for a control. */
+  --muscle-primary: #f0883e;
+  --muscle-secondary: #a86a3d;
   --figure-kit: var(--text-dim);
   --figure-arrow: var(--accent);
   --figure-floor: var(--border);
@@ -1040,6 +1050,30 @@ a { color: var(--accent); }
   border-color: var(--figure-ghost);
 }
 
+.fig-muscles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  justify-content: center;
+  margin: 6px 0 0;
+}
+
+/* Named, because a glowing patch on a thigh is only useful if you can tell a
+   hamstring from an adductor. */
+.fig-muscle {
+  font-size: 11px;
+  padding: 3px 7px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--muscle-secondary) 22%, transparent);
+  color: var(--text-dim);
+}
+
+.fig-muscle.is-primary {
+  background: color-mix(in srgb, var(--muscle-primary) 26%, transparent);
+  color: var(--text);
+  font-weight: 600;
+}
+
 .fig-fault {
   margin: 6px 0 0;
   font-size: 12px;
@@ -1050,4 +1084,28 @@ a { color: var(--accent); }
 /* In the flow player the figure sits on the page background, not a card. */
 .flow .exercise-figure { background: none; padding: 0; margin: 0; }
 .flow .exercise-figure figcaption { display: none; }
-.flow .fig-fault { display: none; }
+.flow .fig-muscles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  justify-content: center;
+  margin: 6px 0 0;
+}
+
+/* Named, because a glowing patch on a thigh is only useful if you can tell a
+   hamstring from an adductor. */
+.fig-muscle {
+  font-size: 11px;
+  padding: 3px 7px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--muscle-secondary) 22%, transparent);
+  color: var(--text-dim);
+}
+
+.fig-muscle.is-primary {
+  background: color-mix(in srgb, var(--muscle-primary) 26%, transparent);
+  color: var(--text);
+  font-weight: 600;
+}
+
+.fig-fault { display: none; }

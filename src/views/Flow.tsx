@@ -278,7 +278,13 @@ export default function Flow({
         {/* The get-ready window is exactly when a picture is useful: you are
             reading it, not holding a position. During work the timer wins. */}
         {isReady && figureFor(drill.exercise) && (
-          <Figure spec={figureFor(drill.exercise)!} title={drill.exercise.name} size={150} />
+          <Figure
+            spec={figureFor(drill.exercise)!}
+            title={drill.exercise.name}
+            size={150}
+            primaryMuscles={drill.exercise.primaryMuscles}
+            secondaryMuscles={drill.exercise.secondaryMuscles}
+          />
         )}
 
         {segment.kind === 'work' && segment.side && (

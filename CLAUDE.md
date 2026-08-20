@@ -271,6 +271,24 @@ be argued with.
   `planWeek`; if you add another surface that decides what to train, it follows
   the week too or it does not ship.
 
+## Figures
+
+Three files. `figureGeometry.ts` builds the skeleton in 3D and projects it by
+hand — no WebGL, and no per-exercise animation data, because that would have to
+be invented. `figureMuscles.ts` places the 21 muscles the rest of the app
+already reasons about onto that skeleton. `Figure.tsx` draws it: solid capsules
+and a trunk polygon, painter's-algorithm depth sorting, play/scrub/turn.
+
+Three rules that are load-bearing:
+
+- **Abduct before you flex.** Rotating a limb about the forward axis does
+  nothing to an arm already held out in front.
+- **Pattern is for programming, not for pictures.** Wall balls are
+  `conditioning` so a heavy 4×5 slot can never serve 100 of them; they get an
+  explicit squat-shaped figure so the drawing is still honest.
+- **`frameFor` is memoised per spec and must stay frozen.** Recomputing bounds
+  per frame makes the figure breathe as it moves and swell as you turn it.
+
 ## Content conventions
 
 Exercises sourced from reels carry `sourceUrl`, `reelId`, and the creator's handle

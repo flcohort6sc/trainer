@@ -157,6 +157,14 @@ expose, and what a fresh install would actually do:
    deliberate decision if it ever goes public.
 2. **Repo visibility** — settled for now: private. See the hosting section.
 
+**Figures are bodies, and they show you the muscles.** Solid articulated
+limbs and a real trunk rather than a stick man, with each exercise's declared
+`primaryMuscles` lit brightly and `secondaryMuscles` faintly — mapped onto the
+skeleton in `components/figureMuscles.ts` and named underneath. That data was
+already there driving the fatigue model; nothing about it is invented. Each
+figure is also framed to its own bounds, because a fixed box sized for a lying
+pose drew a deadlift at a fifth of the available width.
+
 **Figures are 3D and they move.** `components/figureGeometry.ts` builds the
 skeleton in three dimensions and projects it by hand — no WebGL, +1.6KB. Both
 limbs, depth-sorted, turnable by dragging, and playable or scrubbable through

@@ -145,6 +145,99 @@ const BY_PATTERN: Partial<Record<MovementPattern, FigureSpec>> = {
 
 /** Where the pattern default would be wrong, bland, or actively misleading. */
 const BY_ID: Record<string, FigureSpec> = {
+  // --- the Hyrox stations and their substitutes --------------------------
+  // Wall balls and thrusters are CONDITIONING for programming purposes -- a
+  // heavy 4x5 slot must never serve 100 of them -- but they are squat-shaped
+  // movements and the picture should show that, so they get poses of their own
+  // rather than the generic conditioning default.
+  'hx-wall-ball': {
+    start: { torso: 22, hip: 96, knee: 108, ankle: 20, shoulder: 30, elbow: 140 },
+    end: { shoulder: 172, elbow: 8 },
+    arrow: 'hands', view: 30, props: ['medicine-ball'],
+    fault: 'pressing after you stand instead of letting the legs throw it',
+  },
+  'hx-sub-db-thruster': {
+    start: { torso: 20, hip: 92, knee: 104, ankle: 18, shoulder: 28, elbow: 145 },
+    end: { shoulder: 174, elbow: 6 },
+    arrow: 'hands', view: 30, props: ['dumbbell'],
+    fault: 'stopping between the squat and the press — it is one movement',
+  },
+  'hx-sled-push': {
+    start: { torso: 58, hip: 46, knee: 30, shoulder: 100, elbow: 6 },
+    end: { torso: 58, hip: 62, knee: 74, shoulder: 100, elbow: 6, split: 1 },
+    arrow: 'none', view: 24,
+    fault: 'standing up as it gets heavy — the angle is the whole exercise',
+  },
+  'hx-sub-treadmill-push': {
+    start: { torso: 56, hip: 44, knee: 28, shoulder: 98, elbow: 6 },
+    end: { torso: 56, hip: 60, knee: 72, shoulder: 98, elbow: 6, split: 1 },
+    arrow: 'none', view: 24,
+    fault: 'letting the hips rise until you are jogging rather than pushing',
+  },
+  'hx-sub-towel-push': {
+    start: { torso: 62, hip: 50, knee: 34, shoulder: 104, elbow: 4 },
+    end: { torso: 62, hip: 66, knee: 78, shoulder: 104, elbow: 4, split: 1 },
+    arrow: 'none', view: 24,
+  },
+  'hx-sled-pull': {
+    start: { torso: -14, hip: 26, knee: 22, shoulder: 76, elbow: 14 },
+    end: { torso: -18, hip: 34, knee: 30, shoulder: 20, elbow: 130 },
+    arrow: 'hands', view: 26,
+    fault: 'rowing with the arms instead of sitting back into the rope',
+  },
+  'hx-sub-heavy-row': {
+    start: { torso: 74, hip: 78, knee: 22, shoulder: 92, elbow: 4 },
+    end: { torso: 74, hip: 78, knee: 22, shoulder: 60, elbow: 118 },
+    arrow: 'hands', view: 28, props: ['barbell'],
+    fault: 'the torso rising with every rep',
+  },
+  'hx-ski-erg': {
+    start: { shoulder: 168, elbow: 10 },
+    end: { torso: 42, hip: 48, knee: 26, shoulder: 6, elbow: 6 },
+    arrow: 'hands', view: 26,
+    fault: 'pulling with the arms — the hips and abs do the work',
+  },
+  'hx-sub-straight-arm-pulldown': {
+    start: { torso: 16, hip: 18, shoulder: 148, elbow: 4 },
+    end: { torso: 24, hip: 26, shoulder: 8, elbow: 4 },
+    arrow: 'hands', view: 26,
+    fault: 'bending the elbows, which turns it into a triceps exercise',
+  },
+  'hx-sub-band-overhead-pull': {
+    start: { torso: 10, shoulder: 156, elbow: 6 },
+    end: { torso: 34, hip: 34, shoulder: 10, elbow: 6 },
+    arrow: 'hands', view: 26, props: ['band'],
+  },
+  'hx-row': {
+    start: { base: 'seated', hip: 108, knee: 116, torso: 16, shoulder: 96, elbow: 8, dy: 20 },
+    end: { base: 'seated', hip: 58, knee: 26, torso: -12, shoulder: 44, elbow: 116, dy: 20 },
+    arrow: 'hands', view: 26,
+    fault: 'opening the back before the legs have finished',
+  },
+  'hx-burpee-broad-jump': {
+    start: { base: 'prone', torso: 90, shoulder: 92, dy: 46 },
+    end: { hip: 24, knee: 34, shoulder: 44, elbow: 10 },
+    arrow: 'hips', view: 26,
+    fault: 'jumping up rather than forward',
+  },
+  'hx-sandbag-lunge': {
+    start: { shoulder: -14, elbow: 150 },
+    end: { torso: 10, hip: 62, knee: 98, ankle: 10, shoulder: -14, elbow: 150, split: 1 },
+    arrow: 'hips', view: 26,
+    fault: 'bouncing the back knee off the floor',
+  },
+  'hx-farmers-carry-heavy': {
+    start: { shoulder: 4, shoulderAbduct: 12 },
+    end: { shoulder: 4, shoulderAbduct: 12, hip: 20, knee: 12, split: 1 },
+    arrow: 'none', view: 32, props: ['kettlebell'],
+    fault: 'letting the shoulders round forward under the load',
+  },
+  'hx-sub-medball-slam': {
+    start: { shoulder: 170, elbow: 6 },
+    end: { torso: 56, hip: 62, knee: 30, shoulder: 4, elbow: 6 },
+    arrow: 'hands', view: 26, props: ['medicine-ball'],
+  },
+
   // --- movements whose point is out of the sagittal plane ----------------
   // These used to inherit a pattern default that showed somebody standing
   // still, because the whole exercise happens in a plane the flat figure had

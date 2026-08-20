@@ -372,6 +372,25 @@ It only ever fires for patterns you have actually trained — never doing overhe
 work is a choice, not a lapse — and with an empty log it says **"nothing logged
 yet"** rather than inventing something encouraging.
 
+## The figures
+
+Every exercise where a body position is the point gets one, and it is a body:
+solid limbs, a real trunk, drawn in 3D and projected to SVG by hand. No WebGL —
+the whole thing costs about 2KB.
+
+**The muscles it works are lit up on it.** Primary brightly, secondary faintly,
+named underneath. That comes from the same `primaryMuscles` list the fatigue
+model and the weekly balance review already read, so it can never disagree with
+the rest of the app.
+
+You can **play** it, **scrub** through the rep to stop halfway down, and **drag
+to turn it** — which is the only way some exercises make sense at all. A lateral
+raise viewed from the side is a person standing still.
+
+The motion is interpolated between the start and end poses that have always been
+in the data. Nothing invents a trajectory, for the same reason nothing invents an
+exercise.
+
 ## Progression
 
 `src/engine/progression.ts` — **double progression**. Stay at a weight until you

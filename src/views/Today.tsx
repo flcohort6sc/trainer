@@ -340,7 +340,13 @@ function PlannedExercise({
         <details style={{ marginTop: 8 }}>
           <summary className="faint" style={{ cursor: 'pointer' }}>How to do it</summary>
           {figureFor(exercise) && (
-            <Figure spec={figureFor(exercise)!} title={exercise.name} size={200} />
+            <Figure
+              spec={figureFor(exercise)!}
+              title={exercise.name}
+              size={200}
+              primaryMuscles={exercise.primaryMuscles}
+              secondaryMuscles={exercise.secondaryMuscles}
+            />
           )}
           <ul style={{ margin: '6px 0 0', paddingLeft: 18, fontSize: 13 }} className="dim">
             {exercise.cues.map((c, i) => <li key={i}>{c}</li>)}

@@ -260,3 +260,69 @@ export function project(v: V3, azimuth: number, cx = 100, cy = 108): Projected {
   const scale = 1 + depth / 900
   return { x: cx + x * scale, y: cy + (v.y - cy) * scale, depth }
 }
+
+
+/**
+ * Fit the frame to the exercise.
+ *
+ * A fixed 200x200 box is sized for the widest thing in the library — a lying
+ * pose rotated flat — so a Romanian deadlift, which occupies a narrow vertical
+ * strip, was drawn at about a fifth of the available width.
+ *
+ * The box is computed across the WHOLE movement and a sweep of camera angles,
+ * then frozen. If it were recomputed per frame the figure would breathe as it
+ * moved and swell as you turned it, which is far worse than a little empty
+ * space.
+ */
+export interface Frame { viewBox: string }
+
+const frameCache = new WeakMap<object, Frame>()
+
+export function frameFor(
+  spec: { start: Pose; end: Pose; mid?: Pose; view?: number },
+  pad = 16,
+): Frame {
+  const cached = frameCache.get(spec)
+  if (cached) return cached
+
+  let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity
+  const view = spec.view ?? 38
+
+  for (const t of [0, 0.25, 0.5, 0.75, 1]) {
+    const pose = spec.mid
+      ? t < 0.5 ? lerpPose(spec.start, spec.mid, t * 2) : lerpPose(spec.mid, spec.end, (t - 0.5) * 2)
+      : lerpPose(spec.start, spec.end, t)
+    const s = applyBase(build(pose, spec.start), pose.base)
+    const points = [
+      s.pelvis, s.shoulders, s.head, s.neckTop,
+      ...[s.left, s.right].flatMap((k) => [k.shoulder, k.elbow, k.hand, k.hip, k.knee, k.ankle, k.toe]),
+    ]
+    // Turning the figure must not resize it, so the box covers the range you
+    // can reach with the rotate buttons before it would need recomputing.
+    for (const az of [view - 70, view - 35, view, view + 35, view + 70]) {
+      for (const v of points) {
+        const q = project(v, az)
+        if (q.x < minX) minX = q.x
+        if (q.x > maxX) maxX = q.x
+        if (q.y < minY) minY = q.y
+        if (q.y > maxY) maxY = q.y
+      }
+    }
+  }
+
+  // The floor line is part of the picture whenever the figure stands on it.
+  maxY = Math.max(maxY, 178)
+
+  const x = minX - pad
+  const y = minY - pad
+  const w = maxX - minX + pad * 2
+  const h = maxY - minY + pad * 2
+
+  // Keep it square so the aspect ratio never distorts the body.
+  const size = Math.max(w, h)
+  const frame = {
+    viewBox: `${(x - (size - w) / 2).toFixed(1)} ${(y - (size - h) / 2).toFixed(1)} ${size.toFixed(1)} ${size.toFixed(1)}`,
+  }
+  frameCache.set(spec, frame)
+  return frame
+}
