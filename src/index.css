@@ -1,56 +1,99 @@
 /*
-  Design notes:
-  - Mobile-first. Every interactive target is >= 44px tall because you will be
-    tapping this with sweaty hands, one-handed, between sets.
-  - Dark by default; the gym is not a bright office and neither is 6am.
-  - No CSS framework. Everything here is readable and yours to change.
+  FIELD INSTRUMENT
+  ================================================================
+
+  This app's whole character is measured honesty: it shows the number behind
+  every claim, refuses to invent an exercise it has not seen, and marks its own
+  approximations as approximations. So it is dressed as an instrument — a dive
+  computer, a stopwatch, a lab log — rather than as a lifestyle brand. Nothing
+  here is decorative for its own sake. Legibility is the aesthetic position.
+
+  TYPE. Futura for anything that labels or announces: geometric, engineered,
+  the face of mission plaques and control panels. Avenir Next for reading,
+  because it is humanist enough to stay kind at 13px on a phone at 6am. Menlo
+  for every number, with tabular figures, so a column of weights lines up.
+
+  All three are already on the device. This is a PWA that must open with no
+  signal, and a webfont CDN is a network dependency that fails exactly when you
+  need the app most — on a gym floor with no bars.
+
+  COLOUR. One accent, and it means something: amber is already the colour of a
+  working muscle on the exercise figures, so the app speaks in the same colour
+  it uses to point at your glutes. Ground is near-black with a warm cast, ink is
+  bone rather than white. Every pairing here measures at least 5:1.
+
+  Kept from before, because they were paid for in usability rather than taste:
+  every target is >= 44px, and the light theme is a real theme.
 */
 
 :root {
-  --bg: #0f1115;
-  --surface: #171a21;
-  --surface-2: #1e222b;
-  --border: #2a2f3a;
-  --text: #e8eaed;
-  --text-dim: #9aa3b2;
-  /* 5.6:1 on the card surface. The old #6b7382 measured 3.65:1, which is below
-     AA -- and this token carries every explanation line in the app, so it was
-     the single most-read colour and the least legible one. */
-  --text-faint: #8b93a1;
-  --accent: #4f8cff;
-  --accent-dim: #2d5299;
-  --success: #3fb950;
-  --warn: #d29922;
-  --danger: #f85149;
-  --radius: 10px;
-  --radius-sm: 6px;
+  /* --- ground and ink ------------------------------------------------- */
+  --bg: #0a0a0c;
+  --surface: #131316;
+  --surface-2: #1c1c21;
+  --border: #2b2b31;
+  --rule: #3a3a42;
+
+  --text: #ece7dd;
+  --text-dim: #a49d92;
+  /* 5.0:1 on the card surface. This token carries every explanation line in
+     the app, which makes it the most-read colour in it. */
+  --text-faint: #8a8479;
+
+  /* --- the one accent -------------------------------------------------- */
+  --accent: #f0883e;
+  --accent-dim: #6d3d1c;
+  --accent-ink: #17140f;   /* what to write ON the accent: 7.1:1 */
+
+  --success: #7aa858;
+  --warn: #d9a441;
+  --danger: #e0604d;
+
+  --radius: 3px;
+  --radius-sm: 2px;
+
+  /* --- type ------------------------------------------------------------ */
+  --display: 'Futura', 'Avenir Next Condensed', 'Gill Sans', sans-serif;
+  --body: 'Avenir Next', 'Avenir', 'Optima', sans-serif;
+  --numeral: 'Menlo', ui-monospace, 'SF Mono', monospace;
 
   color-scheme: dark;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  /* Native range sliders, checkboxes and the caret all render in the UA accent
+     unless told otherwise. Browser blue against a warm palette is the single
+     loudest wrong note in the interface. */
+  accent-color: var(--accent);
+  caret-color: var(--accent);
+  font-family: var(--body);
   font-synthesis: none;
   -webkit-text-size-adjust: 100%;
 }
 
 @media (prefers-color-scheme: light) {
   :root:not([data-theme='dark']) {
+    /* Warm paper rather than office white — the same instrument, printed. */
+    --bg: #f2efe8;
+    --surface: #fbf9f4;
+    --surface-2: #e9e5db;
+    --border: #d5cfc2;
+    --rule: #c2bbab;
+
+    --text: #17161a;
+    --text-dim: #57524a;
+    --text-faint: #6b6559;
+
+    --accent: #a34a12;
+    --accent-dim: #e2c3a6;
+    --accent-ink: #fbf9f4;
+
+    --success: #3f6b28;
+    --warn: #8a6410;
+    --danger: #a8362a;
+
     --figure-ink: #10131a;
-    --figure-body: #c3cad6;
-    --figure-body-far: #8c95a5;
-    --muscle-primary: #c2551a;
-    --muscle-secondary: #c99a72;
-    --bg: #f6f7f9;
-    --surface: #ffffff;
-    --surface-2: #eef0f4;
-    --border: #d8dce3;
-    --text: #16191f;
-    --text-dim: #5a6472;
-    /* 4.8:1 on white; the old #8b93a1 was 3.09:1. Same reasoning as dark. */
-    --text-faint: #6b7280;
-    --accent: #2563eb;
-    --accent-dim: #93b4f7;
-    --success: #1a7f37;
-    --warn: #9a6700;
-    --danger: #cf222e;
+    --figure-body: #c9c2b4;
+    --figure-body-far: #948c7c;
+    --muscle-primary: #b5561a;
+    --muscle-secondary: #c09472;
     color-scheme: light;
   }
 }
@@ -62,9 +105,101 @@ body {
   background: var(--bg);
   color: var(--text);
   font-size: 16px;
-  line-height: 1.5;
+  line-height: 1.55;
   -webkit-font-smoothing: antialiased;
   overscroll-behavior-y: none;
+}
+
+/*
+  Grain. An instrument panel is not a flat colour — it has a surface. Turbulence
+  as a data URI costs nothing, needs no image file, and survives offline.
+  Fixed and non-interactive so it never intercepts a tap.
+*/
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.055;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* --- the typographic system ------------------------------------------- */
+
+/*
+  Headings announce; they do not chat. Futura, uppercase, tracked wide, with a
+  hairline running out to the edge — the label above a dial.
+*/
+h1, h2, h3 {
+  font-family: var(--display);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+h1 {
+  font-size: 25px;
+  letter-spacing: 0.09em;
+  margin: 0 0 14px;
+}
+
+h2 {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+  letter-spacing: 0.16em;
+  color: var(--text-dim);
+  margin: 26px 0 10px;
+}
+
+/* The rule that runs off to the right of every section label. */
+h2::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--rule);
+  opacity: 0.65;
+}
+
+h3 {
+  font-size: 15px;
+  letter-spacing: 0.04em;
+  text-transform: none;
+  font-weight: 600;
+}
+
+/* Every number in the app is an instrument reading: same face, same width, so
+   a column of weights or dates lines up down the screen. */
+.mono, .stat .value, .plan-daynum, input[type='number'] {
+  font-family: var(--numeral);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}
+
+/*
+  One orchestrated arrival, then nothing. A screen that settles into place on
+  open reads as an instrument booting; motion scattered through the session
+  would just be in the way when you are mid-set.
+*/
+@keyframes rise {
+  from { opacity: 0; transform: translateY(7px); }
+  to { opacity: 1; transform: none; }
+}
+
+.app-main > * {
+  animation: rise 0.34s cubic-bezier(0.22, 0.61, 0.36, 1) backwards;
+}
+
+.app-main > *:nth-child(1) { animation-delay: 0.02s; }
+.app-main > *:nth-child(2) { animation-delay: 0.06s; }
+.app-main > *:nth-child(3) { animation-delay: 0.10s; }
+.app-main > *:nth-child(4) { animation-delay: 0.14s; }
+.app-main > *:nth-child(n+5) { animation-delay: 0.17s; }
+
+@media (prefers-reduced-motion: reduce) {
+  .app-main > * { animation: none; }
 }
 
 #root {
@@ -107,6 +242,10 @@ body {
 
 .tabbar button {
   flex: 1;
+  font-family: var(--display);
+  font-size: 9.5px;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
   background: none;
   border: none;
   color: var(--text-faint);
@@ -154,7 +293,24 @@ h3 { font-size: 15px; margin: 0 0 6px; }
 }
 
 .card.clickable { cursor: pointer; transition: border-color 0.15s, background 0.15s; }
-.card.clickable:hover { border-color: var(--accent-dim); background: var(--surface-2); }
+.card.clickable:hover { border-color: var(--accent); background: var(--surface-2); }
+
+/*
+  A rule down the left of a card, the way a printed form marks a field. Cheap,
+  and it makes a stack of cards read as one instrument rather than as a pile of
+  separate boxes.
+*/
+.card { position: relative; }
+.card::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 10px;
+  bottom: 10px;
+  width: 2px;
+  background: var(--rule);
+  opacity: 0.5;
+}
 .card.selected { border-color: var(--accent); }
 
 /* ---------- buttons ---------- */
@@ -164,7 +320,20 @@ button, .btn {
   font-size: 15px;
   border-radius: var(--radius-sm);
   cursor: pointer;
-  transition: filter 0.15s, background 0.15s;
+  transition: filter 0.15s, background 0.15s, border-color 0.15s;
+}
+
+/*
+  The instrument treatment belongs to things that LOOK like buttons, not to
+  every <button> element. Half this app's tappable surfaces are buttons for
+  accessibility reasons -- routine cards, place rows, exercise rows -- and
+  shouting their contents in Futura made a wake-up routine read like a warning
+  label.
+*/
+.btn {
+  font-family: var(--display);
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
 }
 
 .btn {
@@ -184,7 +353,7 @@ button, .btn {
 .btn:active { filter: brightness(0.9); }
 .btn:disabled { opacity: 0.45; cursor: not-allowed; filter: none; }
 
-.btn-primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+.btn-primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
 .btn-danger { background: transparent; border-color: var(--danger); color: var(--danger); }
 .btn-ghost { background: transparent; border-color: transparent; color: var(--text-dim); }
 .btn-block { width: 100%; }
@@ -194,7 +363,7 @@ button, .btn {
   at 32 and the settings button at 40. Measured, not guessed. The visual size
   stays small -- the touch target does not.
 */
-.btn-sm { min-height: 44px; padding: 0 10px; font-size: 13px; }
+.btn-sm { min-height: 44px; padding: 0 12px; font-size: 12px; letter-spacing: 0.08em; }
 
 .btn-group { display: flex; gap: 8px; flex-wrap: wrap; }
 
@@ -244,7 +413,7 @@ textarea { min-height: 72px; resize: vertical; line-height: 1.5; }
 }
 
 .chip.selectable { cursor: pointer; user-select: none; min-height: 44px; }
-.chip.on { background: var(--accent); border-color: var(--accent); color: #fff; }
+.chip.on { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
 .chip.pattern { background: var(--accent-dim); color: var(--text); border-color: transparent; }
 .chip.muscle { background: transparent; }
 
@@ -281,7 +450,7 @@ textarea { min-height: 72px; resize: vertical; line-height: 1.5; }
   justify-content: center;
 }
 
-.check-btn.done { background: var(--success); border-color: var(--success); color: #fff; }
+.check-btn.done { background: var(--success); border-color: var(--success); color: var(--bg); }
 
 .set-row.done input { opacity: 0.55; }
 
@@ -395,6 +564,7 @@ textarea { min-height: 72px; resize: vertical; line-height: 1.5; }
 }
 
 .plan-weekday {
+  font-family: var(--display);
   font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -438,6 +608,7 @@ textarea { min-height: 72px; resize: vertical; line-height: 1.5; }
 .welcome { padding-bottom: 40px; }
 
 .welcome-kicker {
+  font-family: var(--display);
   margin: 0;
   font-size: 12px;
   letter-spacing: 0.14em;
@@ -479,7 +650,8 @@ textarea { min-height: 72px; resize: vertical; line-height: 1.5; }
 }
 
 .welcome-facts strong {
-  font-size: 22px;
+  font-family: var(--display);
+  font-size: 26px;
   font-variant-numeric: tabular-nums;
   min-width: 46px;
 }
@@ -598,14 +770,18 @@ textarea { min-height: 72px; resize: vertical; line-height: 1.5; }
   text-align: center;
 }
 
-.stat .value { font-size: 22px; font-weight: 600; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
-.stat .label { font-size: 11px; color: var(--text-faint); text-transform: uppercase; letter-spacing: 0.04em; margin-top: 2px; }
+.stat .value { font-size: 23px; font-weight: 600; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+.stat .label {
+  font-family: var(--display); font-size: 11px; color: var(--text-faint); text-transform: uppercase; letter-spacing: 0.04em; margin-top: 2px; }
 
 .reason {
   font-size: 12px;
   color: var(--text-faint);
-  font-style: italic;
-  margin-top: 3px;
+  font-style: normal;
+  margin-top: 4px;
+  padding-left: 10px;
+  border-left: 1px solid var(--rule);
+  line-height: 1.5;
 }
 
 .direction-up { color: var(--success); }
@@ -731,7 +907,8 @@ a { color: var(--accent); }
   padding: 10px 12px;
 }
 
-.day-card.is-second .day-when { flex-shrink: 0; }
+.day-card.is-second .day-when {
+  font-family: var(--display); flex-shrink: 0; }
 .day-card.is-second .day-mins { margin-left: auto; }
 
 .day-icon { font-size: 20px; line-height: 1.2; }

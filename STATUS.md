@@ -209,6 +209,27 @@ wall balls and thrusters were 'squat', which let a heavy 4×5 slot serve 100 wal
 balls and halved the fatigue model's bias. They are conditioning; there is now a
 test that a heavy primary slot can never be filled with a conditioning station.
 
+## Design
+
+**Field instrument.** The app's character is measured honesty — it shows the
+number behind every claim and marks its own approximations — so it is dressed
+as an instrument rather than a lifestyle brand. Futura for anything that labels
+or announces, Avenir Next for reading, Menlo with tabular figures for every
+number. Warm bone on near-black; warm paper and burnt orange in the light
+theme. One accent, and it means something: amber is already the colour of a
+working muscle on the figures.
+
+**All three faces are on the device.** This is a PWA that must open with no
+signal, and a webfont CDN is a network dependency that fails exactly when you
+need the app most.
+
+Two things the restyle nearly broke, both caught by measuring rather than
+looking: white on amber is **2.05:1**, so buttons take dark ink (7.1:1); and
+the type treatment was written against `button, .btn`, which uppercased every
+tappable surface in the app — half of which are `<button>` for accessibility
+reasons, so a wake-up routine read like a warning label. Tap targets were
+re-measured afterwards: still **0 under 44px**.
+
 ## Live
 
 **https://flcohort6sc.github.io/trainer/**
