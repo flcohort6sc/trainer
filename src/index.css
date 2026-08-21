@@ -218,7 +218,16 @@ h3 {
   /* Installed on iOS the status bar is translucent and the page runs underneath
      it, so the top inset is not optional -- without it the first heading sits
      behind the clock. The bottom inset is handled on .tabbar. */
-  padding: calc(16px + env(safe-area-inset-top, 0px)) 16px 96px;
+  /*
+    The bottom pad has to grow with the home indicator, because the tab bar
+    does. The bar is 61px here and 95px on a notched iPhone, so a fixed 96px
+    left one pixel of clearance on the device and 35px in a desktop browser --
+    which is exactly why every sweep looked clean and the phone did not.
+  */
+  /* Top clears .top-scrim (56px) so nothing starts life under the button. */
+  padding:
+    calc(64px + env(safe-area-inset-top, 0px)) 16px
+    calc(96px + env(safe-area-inset-bottom, 0px));
 }
 
 .tabbar {
@@ -259,6 +268,25 @@ h3 {
   gap: 3px;
   min-height: 56px;
   transition: color 0.15s;
+}
+
+.tabbar button { min-width: 0; }
+
+/*
+  "PROGRESS" is the longest label and cleared a 375px screen by 4px -- on a
+  320px one, or with the display font missing, it ran off the edge. Let it
+  shrink instead of overflow.
+*/
+.tab-label {
+  display: block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (max-width: 400px) {
+  .tabbar button { font-size: 9px; letter-spacing: 0.05em; }
 }
 
 .tabbar button .icon { font-size: 20px; line-height: 1; }
@@ -580,11 +608,19 @@ textarea { min-height: 72px; resize: vertical; line-height: 1.5; }
 /* ---------- settings, off the tab bar ---------- */
 
 /*
-  The settings button floats over the top-right corner, so any view whose first
-  element is a header row has to leave it somewhere to sit -- otherwise it lands
-  on top of that row's own button.
+  The scrim covers the whole top strip, so the first row no longer has to dodge
+  the button and can be the same shape as every other row.
 */
-.app-main > .card-row:first-child { padding-right: 46px; }
+.top-scrim {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: calc(56px + env(safe-area-inset-top, 0px));
+  background: var(--bg);
+  z-index: 39;
+  pointer-events: none;
+}
 
 .settings-button {
   position: fixed;
@@ -791,13 +827,15 @@ textarea { min-height: 72px; resize: vertical; line-height: 1.5; }
 
 .sticky-actions {
   position: sticky;
-  bottom: 72px;
+  /* Clear of the tab bar including the home indicator; 72px alone put the
+     primary action inside the bar on a real phone. */
+  bottom: calc(72px + env(safe-area-inset-bottom, 0px));
   background: var(--bg);
   padding: 8px 0;
   /* Its own height plus the tab bar, so the last set row is not sitting
      underneath it. Without this the bottom exercise of a session is unreachable
      -- which is the one you are logging when you are most tired. */
-  margin: 8px 0 84px;
+  margin: 8px 0 calc(84px + env(safe-area-inset-bottom, 0px));
 }
 
 /* Fade the scrolling content out above the button instead of letting it show

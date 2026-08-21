@@ -70,6 +70,15 @@ function Shell() {
   return (
     <>
       {/*
+        An opaque strip across the top edge. Installed on iOS the page runs
+        under the translucent status bar, and the place button is a solid
+        circle sitting over a scrolling column -- so without this, scrolled
+        text renders behind the clock and loses a 44px bite out of its
+        right-hand end. A full-width strip means content disappears under a
+        header edge, which is what a header is for.
+      */}
+      <div className="top-scrim" aria-hidden="true" />
+      {/*
         Not on Log: it floats over the top-right corner, which mid-session is
         exactly where the tick boxes are. Nothing about where you are training
         changes while you are already training.
@@ -153,7 +162,7 @@ function Shell() {
                 {/* A live session gets a dot so you cannot forget you are mid-workout. */}
                 {t.id === 'log' && activeSession ? '🔴' : t.icon}
               </span>
-              {t.label}
+              <span className="tab-label">{t.label}</span>
             </button>
           ))}
         </div>

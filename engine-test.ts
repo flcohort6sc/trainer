@@ -3,6 +3,7 @@
  * shuffle? Runs against the real seed data, no UI involved.
  */
 
+import { readFileSync } from 'node:fs'
 import { HYROX_EXERCISES } from './src/data/hyroxExercises'
 import { SEED_ENDURANCE } from './src/data/seedEndurance'
 import { SEED_EXERCISES } from './src/data/seedExercises'
@@ -1314,6 +1315,51 @@ check('an exercise you created is never touched',
   refreshShippedContent(mine).exercises.find((e) => e.id === 'ex-mine')!.cues[0] === 'my cue')
 check('nothing is rewritten when everything already matches',
   refreshShippedContent(resetToSeed()) === resetToSeed() || true)
+
+// -------------------------------------------------- [U1] safe-area layout
+/*
+  These are arithmetic, so they are testable, and both of them shipped wrong.
+  The bottom bar grows by the home indicator while .app-main's bottom padding
+  did not, which left one pixel of clearance on a real iPhone and 35 in a
+  desktop browser -- the reason every sweep here looked clean while the phone
+  did not. And the place button is an opaque circle over a scrolling column:
+  unless it sits entirely inside the scrim, text passes behind it and comes out
+  the other side with a bite taken out of it.
+*/
+console.log('\n[U1] The layout clears the notch and the home indicator')
+
+const css = readFileSync(new URL('./src/index.css', import.meta.url), 'utf8')
+const ruleFor = (sel: string) => {
+  const i = css.indexOf(sel + ' {')
+  return i < 0 ? '' : css.slice(i, css.indexOf('}', i))
+}
+const firstNum = (s: string) => Number((s.match(/(\d+(?:\.\d+)?)px/) ?? [])[1] ?? NaN)
+
+const appMain = ruleFor('.app-main')
+const padding = (appMain.match(/padding:[^;]*/s) ?? [''])[0]
+const [padTop, padBottom] = padding.split('16px')
+
+check('.app-main leaves room for the home indicator',
+  /calc\(\s*96px\s*\+\s*env\(safe-area-inset-bottom/.test(padBottom ?? ''),
+  padBottom?.trim().slice(0, 60))
+check('.app-main leaves room for the status bar',
+  /env\(safe-area-inset-top/.test(padTop ?? ''), padTop?.trim().slice(0, 60))
+check('the sticky action bar sits above the tab bar, indicator included',
+  /calc\(72px \+ env\(safe-area-inset-bottom/.test(ruleFor('.sticky-actions')))
+
+const scrimHeight = firstNum((ruleFor('.top-scrim').match(/height:[^;]*/) ?? [''])[0])
+const buttonTop = firstNum((ruleFor('.settings-button').match(/top:[^;]*/) ?? [''])[0])
+const buttonSize = firstNum((ruleFor('.settings-button').match(/height:[^;]*/) ?? [''])[0])
+const mainTop = firstNum(padTop ?? '')
+
+check('the place button is entirely inside the scrim',
+  buttonTop + buttonSize <= scrimHeight,
+  `button ends at ${buttonTop + buttonSize}, scrim is ${scrimHeight} tall`)
+check('content starts below the scrim rather than under the button',
+  mainTop >= scrimHeight, `content at ${mainTop}, scrim ${scrimHeight}`)
+check('both grow by the same inset, so the gap holds on any device',
+  /env\(safe-area-inset-top/.test(ruleFor('.top-scrim')) &&
+  /env\(safe-area-inset-top/.test(ruleFor('.settings-button')))
 
 // ---------------------------------------------------------------- summary
 console.log(`\n${'='.repeat(52)}`)
