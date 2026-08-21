@@ -59,11 +59,21 @@ export const SEED_EXERCISES: Exercise[] = [
   }),
   ex('sq-hack', 'Machine Hack Squat', 'squat', ['quads'], ['glutes'], ['machine'], {
     difficulty: 1,
-    cues: ['Feet low on the platform biases quads'],
+    cues: [
+      'Feet mid-platform, shoulder width, back flat against the pad',
+      'Lower until the thighs are at least parallel, or as deep as the lower back stays on the pad',
+      'Drive through the whole foot, not just the toes',
+      'The fixed path means you can push closer to failure than a free squat safely',
+    ],
   }),
   ex('sq-leg-press', 'Leg Press', 'squat', ['quads', 'glutes'], ['hamstrings'], ['machine'], {
     difficulty: 1,
-    cues: ['Do not let the lower back round off the pad at the bottom'],
+    cues: [
+      'Feet shoulder width, mid-platform; higher hits more glute, lower more quad',
+      'Lower until the knees are near the chest without the hips curling off the seat',
+      'Do not lock the knees hard at the top',
+      'The tailbone lifting off the pad is the end of your range, not a rep to grind through',
+    ],
   }),
   ex('sq-box', 'Box Squat', 'squat', ['quads', 'glutes'], ['hamstrings'], ['barbell', 'box'], {
     difficulty: 2,
@@ -85,17 +95,32 @@ export const SEED_EXERCISES: Exercise[] = [
   ex('ln-walking', 'Walking Lunge', 'lunge', ['quads', 'glutes'], ['hamstrings', 'calves'], ['dumbbell'], {
     unilateral: true,
     difficulty: 2,
-    cues: ['Step long enough that the front knee stays behind the toes'],
+    cues: [
+      'Step out far enough that the front shin stays roughly vertical',
+      'Back knee travels down towards the floor, not forward',
+      'Stand up fully between steps rather than falling into the next one',
+      'Torso stays tall — leaning forward turns it into a hinge',
+    ],
   }),
   ex('ln-reverse', 'Reverse Lunge', 'lunge', ['glutes', 'quads'], ['hamstrings'], ['dumbbell'], {
     unilateral: true,
     difficulty: 1,
-    cues: ['Easier on the knees than a forward lunge'],
+    cues: [
+      'Step backwards, which keeps the front shin vertical and is kinder to the knee',
+      'Lower the back knee straight down under control',
+      'Weight stays in the front heel to come back up',
+      'Easier on the knee than a forward lunge, so use it when the joint is grumbling',
+    ],
   }),
   ex('ln-step-up', 'Step-Up', 'lunge', ['quads', 'glutes'], ['calves'], ['dumbbell', 'box'], {
     unilateral: true,
     difficulty: 1,
-    cues: ['Do not push off the trailing foot — all the work is the top leg'],
+    cues: [
+      'The whole rep is driven by the leg on the box — the trailing leg does not push off',
+      'Box height so the thigh is roughly parallel at the start',
+      'Stand fully tall at the top before lowering',
+      'Lower under control; stepping down heavily is where knees complain',
+    ],
   }),
   ex('ln-cossack', 'Cossack Squat', 'lunge', ['adductors', 'quads'], ['glutes'], ['bodyweight'], {
     cues: ['Push the hips back on the bending side and keep that heel down', 'Straight leg stays straight, toes up', 'Go only as low as you can come back up from without a hand down'],
@@ -116,7 +141,12 @@ export const SEED_EXERCISES: Exercise[] = [
   }),
   ex('hg-rdl-db', 'Dumbbell RDL', 'hinge', ['hamstrings', 'glutes'], ['lower-back'], ['dumbbell'], {
     difficulty: 1,
-    cues: ['Drag the dumbbells down the thighs'],
+    cues: [
+      'Push the hips backwards — the bar drops because the hips moved, not because you bent down',
+      'Soft knees, then keep that bend fixed the whole way',
+      'Bells stay close, brushing the thighs on the way down',
+      'Stop where the hamstrings stop, not where the floor is',
+    ],
   }),
   ex('hg-single-rdl', 'Single-Leg RDL', 'hinge', ['hamstrings', 'glutes'], ['abs', 'lower-back'], ['dumbbell'], {
     unilateral: true,
@@ -130,12 +160,22 @@ export const SEED_EXERCISES: Exercise[] = [
   }),
   ex('hg-swing', 'Kettlebell Swing', 'hinge', ['glutes', 'hamstrings'], ['lower-back', 'abs'], ['kettlebell'], {
     difficulty: 2,
-    cues: ['It is a hinge, not a squat', 'The bell floats — you do not lift it with the arms'],
+    cues: [
+      'It is a hinge, not a squat — the hips travel back, they do not drop',
+      'Load the hamstrings before you start: hike the bell back behind you like a rugby pass',
+      'Snap the glutes and let the bell float to chest height on its own',
+      'Shoulders packed down, arms loose. The arms are ropes, not levers',
+    ],
     tags: ['conditioning', 'finisher'],
   }),
   ex('hg-good-morning', 'Good Morning', 'hinge', ['hamstrings', 'lower-back'], ['glutes'], ['barbell'], {
     difficulty: 3,
-    cues: ['Light. This is not a squat variation.'],
+    cues: [
+      'Bar high on the back, same as a squat, then hinge from the hips',
+      'The back stays long from head to hips throughout',
+      'Go only as far as you can hold that position',
+      'Start absurdly light — this one punishes ego more than any other lift',
+    ],
   }),
   ex('hg-back-ext', 'Back Extension', 'hinge', ['lower-back', 'glutes'], ['hamstrings'], ['machine'], {
     cues: ['Hinge at the hips, not the lower back — the spine stays long', 'Squeeze the glutes to come up rather than yanking with the back', 'Stop level with your legs; arching past that adds nothing'],
@@ -145,13 +185,23 @@ export const SEED_EXERCISES: Exercise[] = [
   ex('hg-glute-bridge', 'Glute Bridge', 'hinge', ['glutes'], ['hamstrings'], ['bodyweight', 'mat'], {
     difficulty: 1,
     loadType: 'reps',
-    cues: ['Posteriorly tilt first, then lift — otherwise the lower back does the work'],
+    cues: [
+      'Drive through the heels and finish by squeezing the glutes, not by arching the back',
+      'Ribs down: the hips should stop level with the shoulders and knees',
+      'Pause for a beat at the top of every rep',
+      'If you feel it in the hamstrings, walk the feet in a little closer',
+    ],
     tags: ['warmup', 'rehab', 'home', 'no-equipment'],
   }),
   ex('hg-nordic', 'Nordic Hamstring Curl', 'hinge', ['hamstrings'], ['glutes'], ['bodyweight', 'mat'], {
     difficulty: 3,
     loadType: 'reps',
-    cues: ['Lower as slowly as you can control, push back up with hands'],
+    cues: [
+      'Knees anchored, then lower under control as far as you can and catch yourself',
+      'Break at the knees, not the hips — the body stays in one line',
+      'Push back up with your hands; only the lowering is the exercise',
+      'Three or four reps is a full set. This gets you sore like nothing else',
+    ],
     tags: ['home', 'no-equipment'],
   }),
 
@@ -162,26 +212,51 @@ export const SEED_EXERCISES: Exercise[] = [
   }),
   ex('ph-db-bench', 'Dumbbell Bench Press', 'push-horizontal', ['chest'], ['triceps', 'front-delts'], ['dumbbell', 'bench'], {
     difficulty: 1,
-    cues: ['Slight arc inward at the top — do not clang them together'],
+    cues: [
+      'Shoulder blades pinned back and down into the bench before the first rep',
+      'Elbows about 45 degrees from the ribs, not flared straight out',
+      'Lower under control until the elbows are level with the torso',
+      'Feet planted, ribs down — no arching up off the bench to shorten the range',
+    ],
   }),
   ex('ph-incline', 'Incline Dumbbell Press', 'push-horizontal', ['chest', 'front-delts'], ['triceps'], ['dumbbell', 'bench'], {
     difficulty: 1,
-    cues: ['30-45 degrees. Steeper and it becomes a shoulder press.'],
+    cues: [
+      'Bench at 30 degrees or so; steeper and it quietly becomes a shoulder press',
+      'Same 45-degree elbow angle as a flat press',
+      'Press slightly back so the bells finish over the collarbones, not the face',
+      'Control the lowering — the stretch at the bottom is the point of the incline',
+    ],
   }),
   ex('ph-pushup', 'Push-Up', 'push-horizontal', ['chest'], ['triceps', 'front-delts', 'abs'], ['bodyweight'], {
     difficulty: 1,
     loadType: 'reps',
-    cues: ['Body is a plank — hips do not sag or pike'],
+    cues: [
+      'One straight line from heels to head, glutes and abs on',
+      'Hands under the shoulders, elbows tracking back rather than flaring wide',
+      'Chest to the floor, not the chin',
+      'If the hips sag, drop to your knees rather than shorten the range',
+    ],
     tags: ['travel', 'warmup', 'home', 'no-equipment'],
   }),
   ex('ph-dip', 'Chest Dip', 'push-horizontal', ['chest', 'triceps'], ['front-delts'], ['bodyweight'], {
     difficulty: 3,
     loadType: 'reps',
-    cues: ['Lean forward for chest, stay upright for triceps'],
+    cues: [
+      'Lean the torso forward to bias the chest; stay upright to bias the triceps',
+      'Lower until the upper arms are parallel and stop there',
+      'Shoulders stay down and back — do not let them roll forward at the bottom',
+      'If the shoulders complain, reduce the depth before you reduce the reps',
+    ],
   }),
   ex('ph-cable-fly', 'Cable Fly', 'push-horizontal', ['chest'], ['front-delts'], ['cable'], {
     difficulty: 1,
-    cues: ['Soft elbow, fixed angle — it is a hug, not a press'],
+    cues: [
+      'Soft bend in the elbows, then keep that angle fixed for the whole set',
+      'Think about closing the arms, not pushing — the moment the elbows bend it is a press',
+      'Squeeze for a beat where the hands meet',
+      'Let the hands travel behind the chest at the back for the stretch',
+    ],
   }),
   ex('ph-machine-press', 'Machine Chest Press', 'push-horizontal', ['chest'], ['triceps', 'front-delts'], ['machine'], {
     cues: ['Set the seat so the handles sit at mid-chest', 'Shoulder blades stay pinned to the pad throughout', 'Stop just short of locking out to keep the chest loaded'],
@@ -199,11 +274,21 @@ export const SEED_EXERCISES: Exercise[] = [
   }),
   ex('pv-arnold', 'Arnold Press', 'push-vertical', ['front-delts', 'side-delts'], ['triceps'], ['dumbbell'], {
     difficulty: 2,
-    cues: ['Rotate as you press, not before'],
+    cues: [
+      'Start with the palms facing you, then rotate as you press',
+      'The rotation happens on the way up and reverses on the way down',
+      'Ribs down; no arching to get under the weight',
+      'Lighter than a straight press because the rotation is the exercise',
+    ],
   }),
   ex('pv-push-press', 'Push Press', 'push-vertical', ['front-delts'], ['triceps', 'quads'], ['barbell'], {
     difficulty: 3,
-    cues: ['Short dip, violent drive — the legs start it, the arms finish it'],
+    cues: [
+      'A short sharp dip from the legs, then drive — not a squat',
+      'The bar path is straight up past the face; move your head back, not the bar forward',
+      'Lock out overhead with the biceps by the ears',
+      'The legs start it; the shoulders only finish it',
+    ],
   }),
   ex('pv-pike-pushup', 'Pike Push-Up', 'push-vertical', ['front-delts'], ['triceps'], ['bodyweight'], {
     cues: ['Hips high, head between the arms — this is a vertical press, not a push-up', 'Crown of the head to the floor between your hands', 'Feet on a box makes it harder, hands on a box easier'],
@@ -214,7 +299,12 @@ export const SEED_EXERCISES: Exercise[] = [
   ex('pv-landmine', 'Half-Kneeling Landmine Press', 'push-vertical', ['front-delts'], ['abs', 'triceps'], ['barbell'], {
     unilateral: true,
     difficulty: 2,
-    cues: ['Shoulder-friendly when overhead pressing hurts'],
+    cues: [
+      'Half-kneeling, with the down knee on the same side as the pressing arm',
+      'Ribs down and glute squeezed on the kneeling side — that is what stops you arching',
+      'Press up and slightly forward, following the bar path',
+      'The angled path is friendlier to shoulders than a vertical press',
+    ],
     tags: ['shoulder-friendly'],
   }),
 
@@ -231,7 +321,12 @@ export const SEED_EXERCISES: Exercise[] = [
   }),
   ex('pu-lat-pulldown', 'Lat Pulldown', 'pull-vertical', ['lats'], ['biceps', 'upper-back'], ['cable'], {
     difficulty: 1,
-    cues: ['Lean back slightly and stay there — do not row it'],
+    cues: [
+      'Set the thigh pad so you are not lifting off the seat',
+      'Pull the bar to the collarbones, driving the elbows down and back',
+      'Torso stays close to upright — a big lean turns it into a row',
+      'Let the shoulder blades rise at the top of each rep',
+    ],
   }),
   ex('pu-assisted', 'Assisted Pull-Up', 'pull-vertical', ['lats'], ['biceps'], ['machine'], {
     cues: ['Use the least assistance that lets you control the way down', 'Same rules as a chin-up — dead hang, elbows to ribs', 'Lower slowly; the eccentric is what builds the unassisted one'],
@@ -248,20 +343,40 @@ export const SEED_EXERCISES: Exercise[] = [
   // ---------- PULL HORIZONTAL ----------
   ex('pr-bb-row', 'Barbell Row', 'pull-horizontal', ['upper-back', 'lats'], ['biceps', 'lower-back'], ['barbell'], {
     difficulty: 2,
-    cues: ['Torso angle stays fixed — do not use it as a pump handle'],
+    cues: [
+      'Hinge to roughly 45 degrees and keep that angle for every rep',
+      'Pull to the belly button, driving the elbows past the ribs',
+      'Squeeze the shoulder blades at the top; let them travel at the bottom',
+      'No heaving with the lower back — if the torso rises, the weight is wrong',
+    ],
   }),
   ex('pr-db-row', 'Single-Arm Dumbbell Row', 'pull-horizontal', ['lats', 'upper-back'], ['biceps'], ['dumbbell', 'bench'], {
     unilateral: true,
     difficulty: 1,
-    cues: ['Pull to the hip, not the armpit'],
+    cues: [
+      'Hand and knee on the bench, back flat and level like a tabletop',
+      'Drive the elbow back to the hip rather than lifting the bell to the chest',
+      'Hips stay square — do not open the torso to get more range',
+      'Let the shoulder blade reach forward at the bottom of each rep',
+    ],
   }),
   ex('pr-cable-row', 'Seated Cable Row', 'pull-horizontal', ['upper-back', 'lats'], ['biceps', 'rear-delts'], ['cable'], {
     difficulty: 1,
-    cues: ['Let the shoulder blades travel — do not lock them'],
+    cues: [
+      'Sit tall first; the torso angle should barely change during the set',
+      'Pull the handle to the belly button, elbows close to the body',
+      'Shoulders down, chest up — no shrugging',
+      'Do not lean back to move more weight; that is a different exercise',
+    ],
   }),
   ex('pr-chest-supported', 'Chest-Supported Row', 'pull-horizontal', ['upper-back', 'rear-delts'], ['lats', 'biceps'], ['dumbbell', 'bench'], {
     difficulty: 1,
-    cues: ['Removes the lower back entirely — good on deadlift days'],
+    cues: [
+      'Chest stays on the pad for every rep — that is the whole reason for this variation',
+      'Drive the elbows back and up towards the ceiling',
+      'Squeeze the blades together at the top',
+      'Lighter than a free row, because nothing else is helping',
+    ],
   }),
   ex('pr-inverted', 'Inverted Row', 'pull-horizontal', ['upper-back', 'lats'], ['biceps', 'abs'], ['bodyweight', 'barbell'], {
     cues: ['Body in one line from heels to head, glutes on', 'Pull the chest to the bar, elbows past the ribs', 'Feet on a box makes it harder, walk them in to make it easier'],
@@ -271,7 +386,12 @@ export const SEED_EXERCISES: Exercise[] = [
   }),
   ex('pr-face-pull', 'Face Pull', 'pull-horizontal', ['rear-delts', 'upper-back'], ['traps'], ['cable'], {
     difficulty: 1,
-    cues: ['Pull to the forehead, thumbs back at the end'],
+    cues: [
+      'Rope at about face height, pulled towards the forehead, not the chest',
+      'Elbows stay high and finish above the wrists',
+      'Externally rotate at the end so the knuckles face behind you',
+      'Very light and very high rep. This is shoulder maintenance, not a lift',
+    ],
     tags: ['shoulder-health'],
   }),
   ex('pr-meadows', 'Landmine Row', 'pull-horizontal', ['lats', 'upper-back'], ['biceps'], ['barbell'], {
@@ -284,17 +404,32 @@ export const SEED_EXERCISES: Exercise[] = [
   ex('cr-farmer', 'Farmer Carry', 'carry', ['forearms', 'traps'], ['abs', 'glutes'], ['dumbbell'], {
     difficulty: 1,
     loadType: 'weight-time',
-    cues: ['Walk tall, do not lean away from the weight'],
+    cues: [
+      'Stand tall, shoulders back and down, ribs stacked over the hips',
+      'Walk with normal steps — do not shuffle or lean back',
+      'Grip usually fails before anything else; that is the training effect',
+      'Put them down deliberately rather than dropping them',
+    ],
     tags: ['finisher'],
   }),
   ex('cr-suitcase', 'Suitcase Carry', 'carry', ['obliques', 'forearms'], ['abs', 'traps'], ['kettlebell'], {
     unilateral: true,
     difficulty: 1,
     loadType: 'weight-time',
-    cues: ['Resist the side bend — that is the whole exercise'],
+    cues: [
+      'One bell at your side, standing tall — resist the side bend, that is the whole exercise',
+      'Shoulders level and square; do not lean away from the weight to counterbalance it',
+      'Walk normally, breathing normally',
+      'Set it down before your grip fails rather than after',
+    ],
   }),
   ex('cr-overhead', 'Overhead Carry', 'carry', ['front-delts', 'abs'], ['traps', 'upper-back'], ['kettlebell'], {
-    cues: ['Elbow locked, biceps by the ear, ribs down', 'Walk small and slow; the shoulder is doing the work', 'Stop the set when the arm starts to drift forward'],
+    cues: [
+      'Elbow locked, biceps by the ear, ribs down',
+      'Walk small and slow — the shoulder is doing the work, not the legs',
+      'Stop the set when the arm starts drifting forward of the ear',
+      'A much lighter bell than you expect',
+    ],
     difficulty: 2,
     loadType: 'weight-time',
   }),
@@ -303,31 +438,56 @@ export const SEED_EXERCISES: Exercise[] = [
   ex('co-plank', 'Plank', 'core-anti-extension', ['abs'], ['obliques'], ['bodyweight', 'mat'], {
     difficulty: 1,
     loadType: 'time',
-    cues: ['Squeeze glutes and quads — a plank is not a rest position'],
+    cues: [
+      'One line from heels to head — hips neither sagging nor piked up',
+      'Elbows under the shoulders, forearms pressing down into the floor',
+      'Squeeze the glutes and tuck the ribs down; a plank is a whole-body brace',
+      'Breathe. If you cannot talk, the position has already broken',
+    ],
     tags: ['home', 'no-equipment'],
   }),
   ex('co-ab-wheel', 'Ab Wheel Rollout', 'core-anti-extension', ['abs'], ['lats', 'lower-back'], ['ab-wheel'], {
     difficulty: 3,
     loadType: 'reps',
-    cues: ['Ribs down, hips tucked — the back must not arch'],
+    cues: [
+      'Start on the knees with the wheel under the shoulders',
+      'Roll out only as far as you can keep the lower back from arching',
+      'That range is the exercise — extending further is just the spine giving way',
+      'Squeeze the glutes throughout; it stops the hips sagging first',
+    ],
   }),
   ex('co-deadbug', 'Dead Bug', 'core-anti-extension', ['abs'], ['hip-flexors'], ['bodyweight', 'mat'], {
     difficulty: 1,
     loadType: 'reps',
-    cues: ['Lower back stays glued to the floor'],
+    cues: [
+      'Lower back stays in a neutral, quiet position — do not grind it into the floor',
+      'Lower the opposite arm and leg slowly, only as far as the back stays put',
+      'The moment the back starts to lift, you have found your range for today',
+      'Exhale on the way down; holding your breath defeats the point',
+    ],
     tags: ['warmup', 'rehab', 'home', 'no-equipment'],
   }),
   ex('co-bird-dog', 'Bird Dog', 'core-anti-extension', ['abs', 'lower-back'], ['glutes'], ['bodyweight', 'mat'], {
     unilateral: true,
     difficulty: 1,
     loadType: 'reps',
-    cues: ['Balance a glass of water on your lower back — nothing should tip'],
+    cues: [
+      'Spine neutral and long, from the crown of the head to the tailbone',
+      'Hips and shoulders stay square to the floor — no rotating open',
+      'The leg goes straight back with the toes pointing down, not lifted to the ceiling',
+      'Ribs stay down and the neck stays long; look at the floor, not forward',
+    ],
     tags: ['warmup', 'rehab', 'home', 'no-equipment'],
   }),
   ex('co-pallof', 'Pallof Press', 'core-anti-rotation', ['obliques', 'abs'], [], ['cable'], {
     unilateral: true,
     difficulty: 1,
-    cues: ['The cable wants to twist you. Do not let it.'],
+    cues: [
+      'Stand side-on to the anchor and press the handle straight out from the chest',
+      'The cable is trying to rotate you and your job is to refuse',
+      'Hips and shoulders stay square to the front for every rep',
+      'Step further from the anchor for more leverage against you, not more weight',
+    ],
   }),
   ex('co-side-plank', 'Side Plank', 'core-anti-rotation', ['obliques'], ['abs', 'glutes'], ['bodyweight', 'mat'], {
     cues: ['Stack the shoulder over the elbow and the feet over each other', 'Push the floor away so the bottom shoulder is not sagging into the joint', 'Hips up and forward — no rotation towards the floor'],
@@ -339,11 +499,21 @@ export const SEED_EXERCISES: Exercise[] = [
   ex('co-hanging-leg', 'Hanging Leg Raise', 'core-flexion', ['abs', 'hip-flexors'], ['forearms'], ['pullup-bar'], {
     difficulty: 3,
     loadType: 'reps',
-    cues: ['Posteriorly tilt the pelvis at the top or it is just a hip flexor curl'],
+    cues: [
+      'Start from a dead hang with the shoulders pulled down and packed',
+      'Curl the pelvis up rather than just lifting the legs — that is the difference between abs and hip flexors',
+      'No swinging; if you are using momentum, bend the knees and slow down',
+      'Lower under control the whole way',
+    ],
   }),
   ex('co-cable-crunch', 'Cable Crunch', 'core-flexion', ['abs'], [], ['cable'], {
     difficulty: 1,
-    cues: ['Crunch the ribs to the pelvis — hips stay put'],
+    cues: [
+      'Kneel below the rope with the hands beside the head',
+      'Curl the ribs towards the pelvis — the movement is spinal flexion, not a hip hinge',
+      'The hips stay in one place throughout',
+      'Squeeze at the bottom and control the way back up',
+    ],
   }),
   ex('co-hollow', 'Hollow Body Hold', 'core-anti-extension', ['abs'], ['hip-flexors'], ['bodyweight', 'mat'], {
     cues: ['Lower back pressed into the floor before anything else moves', 'Lower the arms and legs only as far as you can hold that contact', 'Breathe. If you cannot, the position is too long for you'],
@@ -371,11 +541,21 @@ export const SEED_EXERCISES: Exercise[] = [
   }),
   ex('is-tri-skull', 'Skull Crusher', 'isolation', ['triceps'], [], ['dumbbell', 'bench'], {
     difficulty: 2,
-    cues: ['Elbows stay pointed at the ceiling'],
+    cues: [
+      'Upper arms stay put, angled slightly back — only the forearms move',
+      'Lower to the forehead or just behind it, under control',
+      'Elbows stay narrow; letting them flare turns it into a press',
+      'Light. This is one of the easier ways to annoy an elbow',
+    ],
   }),
   ex('is-tri-overhead', 'Overhead Cable Extension', 'isolation', ['triceps'], [], ['cable'], {
     difficulty: 1,
-    cues: ['The long head only stretches with the arm overhead — this beats pushdowns for size'],
+    cues: [
+      'Ribs down before you start — this is where people arch to fake range',
+      'Elbows point forward and stay there; only the forearms travel',
+      'Full stretch at the bottom is where the long head of the triceps works',
+      'Squeeze at lockout without snapping the elbow straight',
+    ],
   }),
   ex('is-lat-raise', 'Lateral Raise', 'isolation', ['side-delts'], [], ['dumbbell'], {
     difficulty: 1,
@@ -395,7 +575,12 @@ export const SEED_EXERCISES: Exercise[] = [
   }),
   ex('is-calf-raise', 'Standing Calf Raise', 'isolation', ['calves'], [], ['machine'], {
     difficulty: 1,
-    cues: ['Pause at the bottom stretch, pause at the top'],
+    cues: [
+      'Full range: heels below the step at the bottom, all the way up on the toes',
+      'Pause at the top for a beat and at the bottom for a beat',
+      'Straight leg biases the gastrocnemius; bend the knee and it shifts to the soleus',
+      'Slow. Bouncing turns it into a tendon exercise you did not plan',
+    ],
   }),
   ex('is-shrug', 'Barbell Shrug', 'isolation', ['traps'], ['forearms'], ['barbell'], {
     difficulty: 1,
@@ -438,7 +623,12 @@ export const SEED_EXERCISES: Exercise[] = [
     tags: ['finisher', 'travel', 'home', 'no-equipment'],
   }),
   ex('cd-kb-snatch', 'Kettlebell Snatch', 'conditioning', ['glutes', 'hamstrings'], ['front-delts', 'traps'], ['kettlebell'], {
-    cues: ['It is a hip snap, not an arm lift', 'Punch the hand through at the top so the bell lands softly on the forearm', 'Learn the swing and the high pull first — this one bruises the forearm while you are learning'],
+    cues: [
+      'One movement from the hike to overhead — it is a hip snap, not an arm lift',
+      'Pull long: if the arm takes over early, the bell flips and crashes onto your wrist',
+      'Punch your hand through the handle at the top so it lands softly on the forearm',
+      'Learn the swing and the high pull first — this one bruises while you are learning',
+    ],
     unilateral: true,
     difficulty: 3,
     loadType: 'reps',

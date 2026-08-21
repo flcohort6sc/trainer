@@ -121,7 +121,11 @@ export default function ExerciseDetail({
           >
             Watch someone do it ↗
           </a>
-          <span className="faint"> — opens a search; needs a connection</span>
+          {/* Its own line: as an inline sibling it collided with the link
+              whenever the link wrapped, which is most widths. */}
+          <span className="faint" style={{ display: 'block', marginTop: 2 }}>
+            Opens a search — the one part of this app that needs a connection.
+          </span>
         </p>
       )}
 

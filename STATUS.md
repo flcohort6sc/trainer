@@ -209,6 +209,34 @@ wall balls and thrusters were 'squat', which let a heavy 4×5 slot serve 100 wal
 balls and halved the fatigue model's bias. They are conditioning; there is now a
 test that a heavy primary slot can never be filled with a conditioning station.
 
+## Instructions, checked
+
+Every exercise now carries **at least two instructions** and averages four; the
+average instruction text nearly doubled. Written to be acted on mid-set rather
+than to describe what the movement is.
+
+The kettlebell work was verified against how it is actually coached, because 26
+of the 33 came from saved reels rather than from standard practice. That
+research changed real content: punch *through* the handle on anything finishing
+overhead or the bell crashes onto your wrist; on a gorilla row drive the elbow
+back rather than pulling the bell to your chest, and the second bell stays on
+the floor for balance; a seesaw press has the bells passing each other halfway
+with no rest at the bottom.
+
+**Library → Bells** groups all 33 by what the movement is for — ballistic, press
+and pull, carry, brace and rotate — with a filter for what your current place
+can actually do.
+
+`[F5]` checks every figure mechanically: no joint outside a human range, and no
+sideways movement drawn from an angle that hides it. Four were wrong and are
+fixed.
+
+**The bug worth knowing about:** the library lives in localStorage, so rewriting
+a cue in the seed files reached new installs only — an existing phone would have
+kept the old wording for ever. `MIGRATIONS[7]` refreshes instructions on
+exercises the app shipped, and only those; anything you created has an `ex-` id
+and is never touched. Without it none of this work would have arrived.
+
 ## Design
 
 **Field instrument.** The app's character is measured honesty — it shows the

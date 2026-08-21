@@ -19,7 +19,7 @@ import { SEED_ROUTINES } from '../data/seedRoutines'
 import { SEED_SAUNA } from '../data/seedSauna'
 
 const STORAGE_KEY = 'trainer.data.v1'
-const CURRENT_VERSION = 7
+const CURRENT_VERSION = 8
 
 /** Everything that ships in the box. */
 const ALL_SEED_EXERCISES = [
@@ -258,6 +258,34 @@ const MIGRATIONS: Record<number, (d: AppData) => AppData> = {
   6: (d) => {
     const have = new Set(d.exercises.map((e) => e.id))
     return { ...d, exercises: [...d.exercises, ...HYROX_EXERCISES.filter((e) => !have.has(e.id))] }
+  },
+
+  /**
+   * v7 -> v8: refresh the written instructions on exercises that shipped with
+   * the app.
+   *
+   * Every other migration here is additive because your data is yours. Cues are
+   * the exception, and the reason is a bug this rule created: the whole library
+   * lives in localStorage, so rewriting a cue in the seed files reached new
+   * installs only. An existing phone kept the old wording for ever, and the
+   * work of improving 353 sets of instructions would never have arrived.
+   *
+   * So this one overwrites, but only for ids the app itself shipped -- anything
+   * you created has an `ex-` id from `uid()` and is never touched. If you edited
+   * the cues on one of ours, this replaces them; that is the trade, and it is
+   * the right way round, because the alternative is that nobody ever gets a
+   * correction.
+   */
+  7: (d) => {
+    const shipped = new Map(ALL_SEED_EXERCISES.map((e) => [e.id, e]))
+    return {
+      ...d,
+      exercises: d.exercises.map((e) => {
+        const seed = shipped.get(e.id)
+        if (!seed) return e
+        return { ...e, cues: seed.cues, notes: seed.notes ?? e.notes }
+      }),
+    }
   },
 }
 

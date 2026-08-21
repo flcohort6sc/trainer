@@ -49,7 +49,12 @@ export const SEED_SAUNA: Exercise[] = [
   }),
   ex('sa-cool-air', 'Cool Down in Fresh Air', 'protocol', ['neck'], [], ['bodyweight'], {
     difficulty: 1, loadType: 'time',
-    cues: ['Step outside, breathe slowly, let the sweating finish before the next round'],
+    cues: [
+      'Step outside or into cool air between rounds rather than straight into cold water',
+      'Stay until the skin stops feeling hot and the breathing settles',
+      'Two to five minutes is usually enough',
+      'This is part of the round, not a break from it',
+    ],
     tags: ['sauna', 'cold', 'recovery'],
   }),
   ex('sa-rest', 'Rest and Rehydrate', 'protocol', ['neck'], [], ['bodyweight'], {
@@ -59,7 +64,12 @@ export const SEED_SAUNA: Exercise[] = [
   }),
   ex('sa-final-rest', 'Final Rest', 'protocol', ['neck'], [], ['bodyweight'], {
     difficulty: 1, loadType: 'time',
-    cues: ['Lie down and do nothing for a few minutes before you get dressed and rush off'],
+    cues: [
+      'Lie down and do nothing for at least as long as your last round',
+      'Rehydrate now, with something containing sodium if you were in a long time',
+      'Skipping this is skipping most of what the sauna was for',
+      'Get up slowly — blood pressure takes a moment to catch up',
+    ],
     tags: ['sauna', 'sauna-final', 'recovery', 'wind-down'],
   }),
 ]

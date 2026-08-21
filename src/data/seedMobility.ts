@@ -86,7 +86,12 @@ export const SEED_MOBILITY: Exercise[] = [
   }),
   ex('wk-arm-circle', 'Arm Circles', 'mobility', ['front-delts'], ['traps'], ['bodyweight'], {
     difficulty: 1, loadType: 'time',
-    cues: ['Small circles growing to the biggest you can make, then reverse'],
+    cues: [
+      'Start with small circles and grow them until they are as big as the shoulder allows',
+      'Then reverse the direction for the same count',
+      'Arms stay straight; the movement is at the shoulder, not the elbow',
+      'Ribs down — do not let the back arch as the circles get bigger',
+    ],
     tags: ['wake', 'shoulder-mobility', 'active-mobility', 'warmup', 'travel', ...HOME],
   }),
   ex('wk-neck-nod', 'Neck Nods and Turns', 'mobility', ['neck'], [], ['bodyweight'], {
@@ -106,7 +111,12 @@ export const SEED_MOBILITY: Exercise[] = [
   }),
   ex('wk-calf-pump', 'Calf Pumps', 'mobility', ['calves'], [], ['bodyweight'], {
     difficulty: 1, loadType: 'time',
-    cues: ['From a plank or downward dog, alternate driving each heel to the floor'],
+    cues: [
+      'From a downward dog or plank, drive one heel towards the floor while the other knee bends',
+      'Alternate slowly rather than bouncing',
+      'Press and hold each one for a beat at the bottom',
+      'Wakes up the calves and ankles before anything that involves running',
+    ],
     tags: ['wake', 'ankle', 'active-mobility', 'warmup', ...HOME],
   }),
   ex('wk-reach-fold', 'Reach and Fold Flow', 'mobility', ['lower-back'], ['hamstrings', 'front-delts'], ['bodyweight'], {

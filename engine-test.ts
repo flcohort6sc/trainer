@@ -1197,6 +1197,53 @@ const frozen = data.exercises
 
 check('every figure that should move, moves', frozen.length === 0,
   frozen.map((e) => e.name).join(', '))
+console.log('\n[F5] Every pose is anatomically possible and drawn from a useful angle')
+/*
+ * Two mechanical checks over all 330 figures, because eyeballing that many is
+ * how a knee bent to 170 degrees survives.
+ */
+const JOINT_LIMITS: Record<string, [number, number]> = {
+  knee: [-5, 150], elbow: [-5, 155], hip: [-35, 135], shoulder: [-65, 182],
+  ankle: [-40, 48], neck: [-45, 45], torso: [-95, 100],
+  shoulderAbduct: [-30, 95], hipAbduct: [-35, 70], twist: [-55, 55],
+}
+const figured = data.exercises.filter((e) => !e.archived && figureFor(e))
+const outOfRange: string[] = []
+const wrongAngle: string[] = []
+
+for (const ex of figured) {
+  const spec = figureFor(ex)!
+  const poses = [spec.start, spec.end, ...(spec.mid ? [spec.mid] : [])]
+  for (const pose of poses) {
+    for (const [joint, [lo, hi]] of Object.entries(JOINT_LIMITS)) {
+      const v = (pose as Record<string, number | undefined>)[joint]
+      if (typeof v === 'number' && (v < lo || v > hi)) outOfRange.push(`${ex.name} ${joint}=${v}`)
+    }
+  }
+
+  // A movement that travels sideways has to be watched from somewhere you can
+  // see sideways from. This is what made a lateral raise a man standing still.
+  const a = build(spec.start, spec.start)
+  const b = build(spec.end, spec.start)
+  let lateral = 0
+  let sagittal = 0
+  for (const side of ['left', 'right'] as const) {
+    for (const k of ['hand', 'knee', 'ankle', 'elbow'] as const) {
+      lateral += Math.abs(a[side][k].z - b[side][k].z)
+      sagittal += Math.abs(a[side][k].x - b[side][k].x) + Math.abs(a[side][k].y - b[side][k].y)
+    }
+  }
+  const base = spec.start.base ?? spec.end.base
+  const view = spec.view ?? (base === 'supine' || base === 'prone' ? 8 : 34)
+  if (lateral > sagittal * 0.85 && view < 40) wrongAngle.push(`${ex.name} @${view}°`)
+}
+
+check('no figure asks a joint to do something it cannot', outOfRange.length === 0,
+  outOfRange.slice(0, 4).join(', '))
+check('sideways movements are drawn from where you can see them', wrongAngle.length === 0,
+  wrongAngle.slice(0, 4).join(', '))
+check('every exercise has instructions', figured.every((e) => e.cues.length > 0))
+
 // ---------------------------------------------------------------- summary
 console.log(`\n${'='.repeat(52)}`)
 console.log(`${pass} passed, ${fail} failed`)

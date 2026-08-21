@@ -3,6 +3,7 @@ import Guides from './Guides'
 import Watch from './Watch'
 import { useStore } from '../store'
 import ExerciseDetail from './ExerciseDetail'
+import Kettlebell from './Kettlebell'
 import { uid } from '../storage/repository'
 import type { Exercise, MovementPattern, Muscle, Equipment, LoadType } from '../types'
 
@@ -41,7 +42,7 @@ export default function Library() {
   const [showArchived, setShowArchived] = useState(false)
   // Tapping a card opens the read view; editing is a button on that.
   const [viewing, setViewing] = useState<Exercise | null>(null)
-  const [mode, setMode] = useState<'exercises' | 'guides' | 'reels'>('exercises')
+  const [mode, setMode] = useState<'exercises' | 'kettlebell' | 'guides' | 'reels'>('exercises')
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase()
@@ -88,6 +89,9 @@ export default function Library() {
         >
           Exercises
         </button>
+        <button className={mode === 'kettlebell' ? 'is-on' : ''} onClick={() => setMode('kettlebell')}>
+          Bells
+        </button>
         <button className={mode === 'guides' ? 'is-on' : ''} onClick={() => setMode('guides')}>
           Guides
         </button>
@@ -96,6 +100,7 @@ export default function Library() {
         </button>
       </div>
 
+      {mode === 'kettlebell' && <Kettlebell onOpen={(e) => setViewing(e)} />}
       {mode === 'guides' && <Guides />}
       {mode === 'reels' && <Watch />}
 

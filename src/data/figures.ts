@@ -286,7 +286,7 @@ const BY_ID: Record<string, FigureSpec> = {
   'ig-mo-crab-cossack-crawl': { start: { torso: 24, hip: 96, knee: 112, hipAbduct: 42, split: 1 }, end: { torso: 24, hip: 30, knee: 18, hipAbduct: 42, split: 1 }, arrow: 'hips', view: 74, fault: 'standing up to travel' },
   'ig-st-banded-passthrough': { start: { shoulder: 8, elbow: 4, shoulderAbduct: 24 }, mid: { shoulder: 94, elbow: 4, shoulderAbduct: 32 }, end: { shoulder: 176, elbow: 4, shoulderAbduct: 26 }, arrow: 'hands', view: 56, props: ['band'], fault: 'bending the elbows to get round — widen the grip instead' },
   'ig-mo-seated-pelvic-tilt': { start: { base: 'seated', hip: 88, knee: 4, hipAbduct: 32, torso: 8, shoulder: 170 }, end: { base: 'seated', hip: 104, knee: 4, hipAbduct: 32, torso: -8, shoulder: 174 }, arrow: 'hips', view: 50, fault: 'rounding the back to sit taller' },
-  'ig-mo-crossed-down-dog': { start: downDog, end: { ...downDog, hipAbduct: 20, knee: 16, split: 1 }, arrow: 'hips', view: 34 },
+  'ig-mo-crossed-down-dog': { start: downDog, end: { ...downDog, hipAbduct: 20, knee: 16, split: 1 }, arrow: 'hips', view: 56 },
   'ig-mo-quadruped-rot-reach': { start: quadruped, end: { ...quadruped, twist: 46, shoulder: 150, elbow: 6 }, arrow: 'hands', view: 44, fault: 'the hips rotating with the reach' },
   'ig-mo-bws-wings': { start: { hip: 90, knee: 118, shoulder: 130, elbow: 120, shoulderAbduct: 40 }, end: { hip: 90, knee: 118, shoulder: 138, elbow: 118, shoulderAbduct: 74, torso: -10 }, arrow: 'hands', view: 68, fault: 'the ribs flaring as the elbows go wide' },
   'ig-mo-full-bridge': { start: { base: 'supine', hip: 92, knee: 92, shoulder: 158, elbow: 96, dy: 40 }, end: { base: 'supine', torso: -34, hip: 12, knee: 74, shoulder: 168, elbow: 8, dy: 24 }, arrow: 'hips', view: 24, fault: 'pushing into the lower back before the shoulders have opened' },
@@ -307,7 +307,7 @@ const BY_ID: Record<string, FigureSpec> = {
   'is-curl-hammer': { start: { shoulder: 6, elbow: 4, shoulderAbduct: 6 }, end: { shoulder: 14, elbow: 138, shoulderAbduct: 6 }, arrow: 'hands', view: 36, props: ['dumbbell'], fault: 'letting the elbows drift forward at the top' },
   'is-curl-cable': { start: { shoulder: -6, elbow: 10 }, end: { shoulder: 10, elbow: 140 }, arrow: 'hands', view: 34, fault: 'resting at the bottom — the point of a cable is that you cannot' },
   'ig-is-incline-db-curl': { start: { base: 'supine', torso: -34, shoulder: -18, elbow: 4, dy: 32 }, end: { base: 'supine', torso: -34, shoulder: -10, elbow: 138, dy: 32 }, arrow: 'hands', view: 34, props: ['bench', 'dumbbell'], fault: 'letting the shoulder come forward, which removes the stretch you lay back for' },
-  'ig-is-zottman-curl': { start: { shoulder: 6, elbow: 4 }, mid: { shoulder: 14, elbow: 142 }, end: { shoulder: 8, elbow: 8, shoulderAbduct: 4 }, arrow: 'hands', view: 36, props: ['dumbbell'], fault: 'rushing the lowering — the reversed grip on the way down is the whole exercise' },
+  'ig-is-zottman-curl': { start: { shoulder: 6, elbow: 4 }, mid: { shoulder: 14, elbow: 142 }, end: { shoulder: 8, elbow: 8, shoulderAbduct: 4 }, arrow: 'hands', view: 58, props: ['dumbbell'], fault: 'rushing the lowering — the reversed grip on the way down is the whole exercise' },
   'ig-kb-curl-halo': { start: { shoulder: 8, elbow: 6 }, mid: { shoulder: 20, elbow: 146 }, end: { shoulder: 150, elbow: 128, twist: 14 }, arrow: 'hands', view: 40, props: ['kettlebell'], fault: 'letting the ribs flare as the bell passes behind the head' },
   'is-tri-pushdown': { start: { shoulder: -6, elbow: 96, torso: 6 }, end: { shoulder: -10, elbow: 4, torso: 6 }, arrow: 'hands', view: 34, fault: 'the elbows travelling — pin them at your sides for the whole set' },
   'is-tri-skull': { start: { base: 'supine', shoulder: 96, elbow: 108, dy: 40 }, end: { base: 'supine', shoulder: 92, elbow: 6, dy: 40 }, arrow: 'hands', view: 16, props: ['bench', 'dumbbell'], fault: 'the upper arms swinging back — only the forearms move' },
@@ -444,7 +444,7 @@ const BY_ID: Record<string, FigureSpec> = {
   },
   'ig-ph-hindu-pushup': {
     start: { base: 'prone', torso: 62, hip: 84, shoulder: 150, knee: 4, dy: 30 },
-    end: { base: 'prone', torso: 104, hip: -18, shoulder: 62, knee: 4, dy: 52 },
+    end: { base: 'prone', torso: 98, hip: -20, shoulder: 62, knee: 4, dy: 52 },
     arrow: 'shoulders', view: 10,
     fault: 'dropping the hips before the chest has travelled forward',
   },
@@ -689,7 +689,7 @@ const BY_ID: Record<string, FigureSpec> = {
   'wd-figure-4': {
     start: { base: 'supine', hip: 88, knee: 90, dy: 40 },
     end: { base: 'supine', hip: 116, knee: 74, hipAbduct: 34, split: 1, dy: 40 },
-    arrow: 'none', view: 30,
+    arrow: 'none', view: 52,
     fault: 'pulling on the shin instead of behind the thigh',
   },
 

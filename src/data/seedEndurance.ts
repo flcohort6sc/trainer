@@ -53,7 +53,12 @@ export const SEED_ENDURANCE: Exercise[] = [
   }),
   ex('sw-fist', 'Fist Drill', 'swim', ['lats'], ['forearms'], [...POOL], {
     difficulty: 2, loadType: 'distance-time',
-    cues: ['Swim with closed fists, then open them and feel how much water the forearm was already holding'],
+    cues: [
+      'Swim freestyle with your hands closed into fists the whole length',
+      'It forces the forearm to do the catching, which is what a good catch feels like',
+      'When the hands open again the water suddenly feels thick — that is the point',
+      'Two or three lengths is plenty; it is a feel drill, not a set',
+    ],
     notes: 'Teaches the high-elbow catch better than any explanation of the high-elbow catch.',
     tags: ['swim', 'drill', 'technique', 'freestyle'],
   }),
@@ -79,18 +84,33 @@ export const SEED_ENDURANCE: Exercise[] = [
   }),
   ex('sw-pull-buoy', 'Pull Set', 'swim', ['lats', 'upper-back'], ['triceps', 'front-delts'], ['pool', 'pull-buoy'], {
     difficulty: 2, loadType: 'distance-time',
-    cues: ['Buoy between the thighs, legs quiet — it is an upper-body set, not a rest'],
+    cues: [
+      'Buoy between the thighs, legs quiet, arms doing all the work',
+      'Hold the body line without kicking — if the hips drop, that is information',
+      'Use it sparingly: leaning on a buoy hides kick and rotation problems rather than fixing them',
+      'Not a way to swim more metres with less effort',
+    ],
     tags: ['swim', 'drill'],
   }),
   ex('sw-paddles', 'Paddle Set', 'swim', ['lats'], ['front-delts', 'chest'], ['pool', 'paddles'], {
     difficulty: 3, loadType: 'distance-time',
-    cues: ['Small paddles first. Big paddles on a bad catch is how shoulders get hurt'],
+    cues: [
+      'Only once your catch is solid — paddles amplify whatever technique you already have',
+      'Start with the smallest pair you own and short distances',
+      'If the shoulders feel it before the lats do, take them off',
+      'Bad catch plus paddles equals a shoulder problem, not a stronger pull',
+    ],
     notes: 'Add paddles only once the catch is decent. They magnify technique, good or bad.',
     tags: ['swim', 'drill'],
   }),
   ex('sw-fins', 'Fin Set', 'swim', ['quads', 'calves'], ['glutes', 'abs'], ['pool', 'fins'], {
     difficulty: 1, loadType: 'distance-time',
-    cues: ['Fins let you hold a better body position long enough to learn what it feels like'],
+    cues: [
+      'Short fins, not long ones — long fins change your kick mechanics',
+      'They hold your body position up so you can think about one thing at a time',
+      'Use them to learn a skill, then take them off and see if it survived',
+      'Ankle flexibility improves with them; speed achieved with them is borrowed',
+    ],
     tags: ['swim', 'drill', 'technique'],
   }),
   ex('sw-open-water', 'Open Water Swim', 'swim', ['lats', 'front-delts'], ['upper-back', 'abs'], ['open-water'], {
@@ -136,12 +156,22 @@ export const SEED_ENDURANCE: Exercise[] = [
   }),
   ex('rn-treadmill', 'Treadmill Run', 'run', ['quads', 'hamstrings'], ['calves', 'glutes'], ['treadmill'], {
     difficulty: 1, loadType: 'distance-time',
-    cues: ['1% incline gets you closer to the effort of running outdoors'],
+    cues: [
+      'Set 1% incline to get closer to the effort of running outside',
+      'Do not hold the rails — it changes the exercise and flatters the effort',
+      'Look ahead rather than down at the console',
+      'Let the belt come to you; do not reach for it with a long stride',
+    ],
     tags: ['run', 'endurance', 'indoor'],
   }),
   ex('rn-track', 'Track Repeats', 'run', ['quads', 'hamstrings'], ['calves'], ['track'], {
     difficulty: 3, loadType: 'distance-time',
-    cues: ['The track exists so the distance is honest and the splits are comparable'],
+    cues: [
+      'The track exists so the distance is honest and the splits are real',
+      'Run the repeats in lane one and jog the recovery in an outer lane',
+      'Even splits: the first rep should feel almost too easy',
+      'Note the times. The point of a track is the data',
+    ],
     tags: ['run', 'intervals'],
   }),
   ex('rn-walk-run', 'Walk-Run Intervals', 'run', ['quads'], ['calves', 'glutes'], ['outdoors'], {

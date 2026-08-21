@@ -73,9 +73,10 @@ export const REEL_EXERCISES: Exercise[] = [
     ['front-delts'], ['triceps', 'abs', 'side-delts'], [...KB], {
     unilateral: true, difficulty: 2, loadType: 'weight-reps',
     cues: [
-      'Two bells in the rack, press one as the other lowers',
-      'The alternating rhythm is the point — each side works independently',
-      'Ribs down and glutes tight so the press does not become a lean',
+      'Both bells in the front rack, elbows just in front of the ribs, not flared out to the sides',
+      'Press one up as the other comes down — they pass each other about halfway',
+      'No rest at the bottom: the bell that lands starts going back up',
+      'Ribs down. If you are leaning back to finish a rep, the bells are too heavy',
     ],
     notes: 'Creator’s claim: forces core and stabilisers through every rep, unlike a two-arm press.',
     tags: ['kettlebell', 'shoulder-health'],
@@ -86,8 +87,9 @@ export const REEL_EXERCISES: Exercise[] = [
     unilateral: true, difficulty: 3, loadType: 'time',
     cues: [
       'Hold the position and fight the bell — the work is resisting, not moving',
-      'Trains the core to resist rotation and extension under load rather than flex forward',
-      'You will feel it inside 30 seconds; that is the exercise working, not you failing',
+      'Hips and shoulders stay square; nothing above the waist should rotate',
+      'Breathe shallow and steady rather than holding your breath',
+      'Stop the moment the position breaks, not when the timer says so',
     ],
     tags: ['kettlebell', 'core'],
   }),
@@ -95,7 +97,12 @@ export const REEL_EXERCISES: Exercise[] = [
   rex('DaOWKQNBAgJ', 'fit___dad', 'ig-kb-crush-press', 'Kettlebell Crush Press', 'push-horizontal',
     ['chest'], ['triceps', 'front-delts'], [...KB], {
     difficulty: 1, loadType: 'weight-reps',
-    cues: ['Crush the horns of the bell throughout the press to create full-body tension'],
+    cues: [
+      'Squeeze the two bells together hard for the whole set — the crushing is the exercise',
+      'Press from the middle of the chest to straight overhead, keeping the pressure on',
+      'Lying on the floor, so the ground stops you dropping the elbows too far',
+      'Light bells. This is a chest-tension drill, not a strength lift',
+    ],
     tags: ['kettlebell', 'home'],
   }),
 
@@ -103,9 +110,10 @@ export const REEL_EXERCISES: Exercise[] = [
     ['obliques'], ['front-delts', 'forearms', 'abs'], [...KB], {
     difficulty: 1, loadType: 'reps',
     cues: [
-      'Pass the bell around your body while keeping the torso completely still',
-      'Builds shoulder mobility, shoulder stability and anti-rotational core at once',
-      'Both directions, equal reps',
+      'Pass the bell hand to hand around your waist, close to the body',
+      'The trunk resists — hips and shoulders stay facing forward the whole time',
+      'Change direction halfway through the set',
+      'Do not lean away from the bell as it passes behind you',
     ],
     tags: ['kettlebell', 'warmup', 'shoulder-mobility'],
   }),
@@ -114,9 +122,10 @@ export const REEL_EXERCISES: Exercise[] = [
     ['chest'], ['triceps', 'abs', 'front-delts'], [...KB], {
     difficulty: 3, loadType: 'reps',
     cues: [
-      'Hands on the horns, body in one straight line, chest to the bell each rep',
-      'Stay rigid and resist rotation — the bell will punish a sloppy plank',
-      'Scale to incline or knee push-ups before scaling the bell',
+      'Hands on the horns of the bell, body in one straight line from heels to head',
+      'Set the bell so it is stable before you load it — check it does not rock',
+      'Lower until the chest touches the bell, elbows tracking back not flared',
+      'The narrow hand position puts this on the triceps more than a normal push-up',
     ],
     tags: ['kettlebell', 'home'],
   }),
@@ -124,7 +133,12 @@ export const REEL_EXERCISES: Exercise[] = [
   rex('Da0kKLshYUE', 'fit___dad', 'ig-kb-ballistic-row', 'Ballistic Row', 'pull-horizontal',
     ['lats', 'upper-back'], ['biceps', 'rear-delts'], [...KB], {
     unilateral: true, difficulty: 2, loadType: 'weight-reps',
-    cues: ['Explode the bell to your hip, then control the lowering phase', 'Absorbing the load is half the rep'],
+    cues: [
+      'Hinge over and stay there — the torso angle does not change between reps',
+      'Explode the bell to the hip, then control it all the way back down',
+      'Drive the elbow back past the ribs rather than lifting with the hand',
+      'The lower back does not help. If it does, the bell is too heavy',
+    ],
     notes: 'Creator frames the four movements of this complex as produce / absorb / transfer / control force.',
     tags: ['kettlebell'],
   }),
@@ -133,9 +147,10 @@ export const REEL_EXERCISES: Exercise[] = [
     ['obliques', 'abs'], ['front-delts', 'traps'], [...KB], {
     difficulty: 3, loadType: 'reps',
     cues: [
-      'Start with the bell by one foot, drive it across the body to the opposite shoulder',
-      'Halo around the head, then return it under control to the opposite foot',
-      'Scale to a standard halo before scaling the weight',
+      'A halo that starts and finishes low, so the bell travels a full diagonal across the body',
+      'Drive it up and across, then circle the head close, then back down the other side',
+      'Hips stay square and still — everything above the waist does the work',
+      'Slow. This is a control drill, not a conditioning one',
     ],
     tags: ['kettlebell'],
   }),
@@ -144,8 +159,10 @@ export const REEL_EXERCISES: Exercise[] = [
     ['quads', 'glutes'], ['front-delts', 'triceps', 'abs'], [...KB], {
     difficulty: 3, loadType: 'reps',
     cues: [
-      'Keep the bell close, catch softly, then drive explosively overhead',
-      'Scale to a goblet squat plus push press',
+      'Clean it by keeping the bell zipped up your centre line, not swinging it out and around',
+      'Punch your hand through the handle so the bell lands softly on the forearm, not on the wrist bone',
+      'Catch in the rack with a vertical forearm and a firm wrist, then drive straight into the press',
+      'Legs start the press; the arm only finishes it',
     ],
     tags: ['kettlebell', 'conditioning', 'finisher'],
   }),
@@ -153,14 +170,24 @@ export const REEL_EXERCISES: Exercise[] = [
   rex('DcKLzFTRRAP', 'trainwithmurph', 'ig-kb-curl-halo', 'Curl to Halo', 'isolation',
     ['biceps'], ['front-delts', 'obliques'], [...KB], {
     difficulty: 2, loadType: 'reps',
-    cues: ['Curl the bell, then halo it around the head and back', 'Both directions, five each way'],
+    cues: [
+      'Curl the bell up first, then circle it around the head close to the skull',
+      'Two separate movements in one rep, in that order',
+      'Ribs down as the bell passes behind you',
+      'Reverse the circle direction each rep',
+    ],
     tags: ['kettlebell'],
   }),
 
   rex('DcKLzFTRRAP', 'trainwithmurph', 'ig-kb-throw-over', 'Throw Overs', 'conditioning',
     ['biceps', 'front-delts'], ['abs', 'forearms'], [...KB], {
     unilateral: true, difficulty: 3, loadType: 'reps',
-    cues: ['Explosive work to finish an arm session, eight per side'],
+    cues: [
+      'Explosive pass of the bell over the shoulder and behind the head, catching it on the other side',
+      'The bell stays close; a wide arc is how wrists get hurt',
+      'Reset your stance between reps rather than drifting across the floor',
+      'Eight per side is plenty — this finishes an arm session, it does not start one',
+    ],
     notes: 'Programmed by the creator as the explosive finisher after curl variations.',
     tags: ['kettlebell', 'finisher'],
   }),
@@ -168,7 +195,12 @@ export const REEL_EXERCISES: Exercise[] = [
   rex('DcLkHMIhLAE', 'vidabymatt', 'ig-kb-curl-chest-press', 'Curl to Chest Press', 'push-horizontal',
     ['chest', 'biceps'], ['triceps', 'front-delts'], [...KB], {
     difficulty: 2, loadType: 'reps',
-    cues: ['One continuous movement: curl it up, press it out'],
+    cues: [
+      'Curl the bell to the shoulder, then press it across and away from the chest',
+      'One continuous movement — no pause between the curl and the press',
+      'Elbow stays in on the curl; the press travels slightly across the body',
+      'A light bell, because the curl is the limiting half',
+    ],
     tags: ['kettlebell', 'home'],
   }),
 
@@ -176,8 +208,10 @@ export const REEL_EXERCISES: Exercise[] = [
     ['chest'], ['triceps', 'front-delts'], [...KB], {
     difficulty: 1, loadType: 'weight-reps',
     cues: [
-      'Lying on the floor, the ground limits the range and protects the shoulder',
-      'Pause when the triceps touch down rather than bouncing',
+      'Lying on the floor, so the ground stops the elbow travelling too far back',
+      'Elbow at about 45 degrees from the ribs, not flared straight out',
+      'Pause when the triceps touch down, then press — no bouncing off the floor',
+      'The reduced range is the point: it is the shoulder-friendly press',
     ],
     tags: ['kettlebell', 'shoulder-friendly', 'home'],
   }),
@@ -186,8 +220,10 @@ export const REEL_EXERCISES: Exercise[] = [
     ['quads', 'glutes'], ['biceps', 'front-delts', 'abs', 'chest'], [...KB], {
     difficulty: 2, loadType: 'reps',
     cues: [
-      'Squat, then curl, then press — one continuous movement',
-      'Build towards 100 quality reps rather than chasing load early',
+      'Squat, curl, press — one continuous movement, as if loading a high shelf',
+      'Stand out of the squat before the curl finishes; the press starts as you stand',
+      'Keep the bell close to the body the whole way up',
+      'Light. This is a coordination and conditioning drill',
     ],
     notes: 'Creator’s pitch: one movement covering legs, glutes, core, chest, biceps, shoulders and grip.',
     tags: ['kettlebell', 'home', 'conditioning', 'travel'],
@@ -196,21 +232,36 @@ export const REEL_EXERCISES: Exercise[] = [
   rex('DcJvchivNRs', 'jeremyriesen', 'ig-kb-halo', 'Kettlebell Halo', 'core-anti-rotation',
     ['obliques'], ['front-delts', 'traps', 'abs'], [...KB], {
     difficulty: 1, loadType: 'reps',
-    cues: ['Circle the bell around the head, close to it, torso still', 'Control over comfort — slow is the point'],
+    cues: [
+      'Bell upside down by the horns, circling close to your head — a wide circle is a shoulder problem',
+      'Behind the head is where the range is; go slowly through that part',
+      'Ribs stay down and the head stays still — only the arms travel',
+      'Reverse direction every few reps',
+    ],
     tags: ['kettlebell', 'warmup', 'shoulder-mobility'],
   }),
 
   rex('DcJvchivNRs', 'jeremyriesen', 'ig-kb-side-crunch', 'Kettlebell Side Crunch', 'core-flexion',
     ['obliques'], ['abs'], [...KB], {
     unilateral: true, difficulty: 1, loadType: 'reps',
-    cues: ['Load one side, bend away from it, then return under control'],
+    cues: [
+      'Bell in one hand, standing tall, then bend directly sideways towards that hand',
+      'Come back up past vertical to feel the other side shorten',
+      'Straight sideways — no twisting, no leaning forward or back',
+      'The unloaded side is the one doing the work',
+    ],
     tags: ['kettlebell', 'core'],
   }),
 
   rex('DcJvchivNRs', 'jeremyriesen', 'ig-kb-oh-situp', 'Overhead Sit-Up', 'core-flexion',
     ['abs'], ['hip-flexors', 'front-delts'], [...KB], {
     difficulty: 2, loadType: 'reps',
-    cues: ['Bell locked out overhead the whole rep', 'If the arms drift forward the weight is too heavy'],
+    cues: [
+      'Bell locked out overhead for the whole rep, arm vertical',
+      'Sit up keeping the bell stacked over the shoulder — it does not drift forward',
+      'Lower one vertebra at a time rather than dropping back',
+      'If the arm wanders, the bell is too heavy for the sit-up',
+    ],
     tags: ['kettlebell', 'core'],
   }),
 
@@ -218,8 +269,10 @@ export const REEL_EXERCISES: Exercise[] = [
     ['abs', 'lats'], ['chest', 'triceps'], [...KB], {
     difficulty: 2, loadType: 'weight-reps',
     cues: [
-      'On your back, take the bell overhead without letting the ribs flare',
-      'The lower back stays flat on the floor — that is the whole exercise',
+      'On your back, take the bell overhead without letting the ribs flare off the floor',
+      'The range is however far you can go with the lower back still flat',
+      'Arms stay almost straight; this is a shoulder and lat movement, not a triceps one',
+      'Slow both ways',
     ],
     tags: ['kettlebell', 'core'],
   }),
@@ -227,7 +280,12 @@ export const REEL_EXERCISES: Exercise[] = [
   rex('DanpCDLyn73', 'prince_lama__', 'ig-kb-crunch', 'Kettlebell Crunch', 'core-flexion',
     ['abs'], ['obliques'], [...KB], {
     unilateral: true, difficulty: 1, loadType: 'reps',
-    cues: ['Ten each side, straight through, no overthinking'],
+    cues: [
+      'Bell held at the chest or over the shoulders, then curl the ribs towards the hips',
+      'Lower back stays pressed into the floor throughout',
+      'Chin off the chest; do not pull on your neck',
+      'Ten each side, straight through',
+    ],
     tags: ['kettlebell', 'core'],
   }),
 
@@ -235,9 +293,10 @@ export const REEL_EXERCISES: Exercise[] = [
     ['glutes', 'front-delts'], ['quads', 'lats', 'abs'], [...KB], {
     difficulty: 3, loadType: 'time',
     cues: [
-      'On the minute: 5 clean and press, then 10 snatches (5 per arm), for 20 minutes',
-      'Starting weights the creator suggests: 2×16kg for men, 2×12kg for women',
-      'Progress by adding time before adding weight — 20 minutes to 30',
+      'On the minute: 5 clean and press, then 10 snatches, 5 per arm',
+      'Pace the first minutes deliberately slowly — this falls apart at the end, not the start',
+      'Punch through the handle on every snatch or your forearms will tell you about it tomorrow',
+      'If you cannot finish inside the minute, drop a rep rather than the technique',
     ],
     notes: 'Translated from German. Original: "Stell dir nen 20 Minuten Timer... Mach das für 20 Minuten."',
     tags: ['kettlebell', 'conditioning', 'finisher'],
@@ -296,7 +355,12 @@ export const REEL_EXERCISES: Exercise[] = [
   rex('Db1cV58hFFW', 'pogawithmads', 'ig-mo-heel-clicks', 'Heel Clicks', 'mobility',
     ['glutes'], ['adductors', 'hip-flexors'], [...BW], {
     unilateral: true, difficulty: 2, loadType: 'reps',
-    cues: ['Lying or seated hip rotation drill, twelve each side'],
+    cues: [
+      'Rotate the hips in and out, clicking the heels together at the top',
+      'The pelvis stays still — the movement is at the hip joint',
+      'Slow and deliberate; this is a rotation drill, not a cardio one',
+      'Twelve each side',
+    ],
     tags: ['active-mobility', 'hip-mobility', 'home', 'no-equipment'],
   }),
 
@@ -357,7 +421,12 @@ export const REEL_EXERCISES: Exercise[] = [
   rex('DcLEmi5R9Oy', 'domdavyfit', 'ig-mo-trunk-twists', 'Trunk Twists', 'mobility',
     ['obliques'], ['lower-back'], [...BW], {
     difficulty: 1, loadType: 'time',
-    cues: ['Feet planted, rotate side to side and let the arms wrap around you'],
+    cues: [
+      'Feet planted and hips facing forward the whole time',
+      'Rotate from the ribs and let the arms wrap around you loosely',
+      'Do not force the end range with a heave — let the arms carry you there',
+      'Speed up gradually as the spine warms',
+    ],
     tags: ['wake', 'spine', 'active-mobility', 'desk-relief', 'home', 'no-equipment'],
   }),
 
@@ -378,14 +447,24 @@ export const REEL_EXERCISES: Exercise[] = [
   rex('DcLEmi5R9Oy', 'domdavyfit', 'ig-mo-bound-ups', 'Bound Ups', 'mobility',
     ['glutes', 'calves'], ['quads'], [...BW], {
     difficulty: 2, loadType: 'time',
-    cues: ['Springy bounding on the spot to bring the whole system up to temperature'],
+    cues: [
+      'Springy bounds on the spot, spending as little time on the floor as possible',
+      'Land on the balls of the feet with soft knees',
+      'Tall posture; do not fold forward as you tire',
+      'Twenty seconds is a lot. This is to raise temperature, not to train',
+    ],
     tags: ['wake', 'active-mobility', 'home', 'no-equipment'],
   }),
 
   rex('DcLEmi5R9Oy', 'domdavyfit', 'ig-mo-childs-flow', "Child's Pose Flow", 'mobility',
     ['lats', 'lower-back'], ['upper-back'], [...BW], {
     difficulty: 1, loadType: 'time',
-    cues: ['Rock in and out of child’s pose and side to side rather than settling into a hold'],
+    cues: [
+      'From child’s pose, flow forward into a low cobra and back again',
+      'Lead with the chest on the way forward, hips on the way back',
+      'Breathe out as you fold, in as you come forward',
+      'Move at the pace of the breath, not faster',
+    ],
     tags: ['wake', 'spine', 'active-mobility', 'home', 'no-equipment'],
   }),
 
@@ -399,28 +478,48 @@ export const REEL_EXERCISES: Exercise[] = [
   rex('DcLEmi5R9Oy', 'domdavyfit', 'ig-mo-yoga-squat-reach', 'Yoga Squat to Reach', 'mobility',
     ['adductors'], ['upper-back', 'quads'], [...BW], {
     difficulty: 2, loadType: 'time',
-    cues: ['Deep squat, elbows inside the knees, then reach one arm to the ceiling and follow it with your eyes'],
+    cues: [
+      'Sit into a deep squat with the elbows inside the knees, pressing them gently out',
+      'Reach one arm to the ceiling and follow it with your eyes',
+      'Heels stay down; if they lift, sit on a low block or hold something',
+      'Alternate sides without standing up between',
+    ],
     tags: ['wake', 'hip-mobility', 'spine', 'active-mobility', 'home', 'no-equipment'],
   }),
 
   rex('DcLEmi5R9Oy', 'domdavyfit', 'ig-mo-lunge-reach', 'Lunge with Reach', 'mobility',
     ['hip-flexors'], ['upper-back', 'glutes'], [...BW], {
     unilateral: true, difficulty: 1, loadType: 'time',
-    cues: ['Deep lunge, squeeze the back glute, then reach the same-side arm overhead and lean away'],
+    cues: [
+      'Deep lunge, back knee off the floor, then reach the same-side arm overhead',
+      'The reach should open the front of the back hip, not just the shoulder',
+      'Ribs down as you reach — the range comes from the hip, not the lower back',
+      'Hold the end position for a breath before switching',
+    ],
     tags: ['wake', 'hip-mobility', 'active-mobility', 'warmup', 'home', 'no-equipment'],
   }),
 
   rex('DcLEmi5R9Oy', 'domdavyfit', 'ig-mo-pike-rotation', 'Pike Rotation', 'mobility',
     ['hamstrings'], ['upper-back', 'front-delts'], [...BW], {
     difficulty: 2, loadType: 'time',
-    cues: ['From a pike or downward dog, rotate the hips open and reach through'],
+    cues: [
+      'From a pike or downward dog, rotate the hips open and reach one arm through',
+      'The reaching hand travels under the body, not out to the side',
+      'Keep pressing the floor away with the supporting arm',
+      'Slow, and let the shoulder blade move',
+    ],
     tags: ['wake', 'spine', 'shoulder-mobility', 'active-mobility', 'home', 'no-equipment'],
   }),
 
   rex('DbvQUgipGc5', 'whyymatteo', 'ig-mo-body-bounces', 'Body Bounces / Shake Out', 'mobility',
     ['calves'], ['quads', 'upper-back'], [...BW], {
     difficulty: 1, loadType: 'time',
-    cues: ['Loose bouncing and shaking to start — the point is to stop being stiff, not to stretch'],
+    cues: [
+      'Loose bouncing and shaking, everywhere at once',
+      'Deliberately sloppy — the point is to stop being stiff, not to do it well',
+      'Shoulders, hands, hips, ankles; let everything rattle',
+      'Thirty seconds before anything else is worth more than it looks',
+    ],
     notes: 'Opens a 12.5-minute morning flow the creator runs daily.',
     tags: ['wake', 'active-mobility', 'home', 'no-equipment'],
   }),
@@ -428,7 +527,12 @@ export const REEL_EXERCISES: Exercise[] = [
   rex('DbvQUgipGc5', 'whyymatteo', 'ig-mo-arm-swings-alt', 'Alternating Arm Swings', 'mobility',
     ['front-delts'], ['chest', 'upper-back'], [...BW], {
     difficulty: 1, loadType: 'time',
-    cues: ['Swing the arms past each other and open wide, alternating which is on top'],
+    cues: [
+      'Swing the arms past each other across the chest, then open wide',
+      'Alternate which arm crosses on top each rep',
+      'Let the momentum carry them; do not force the end range',
+      'Ribs stay down as the arms open behind you',
+    ],
     tags: ['wake', 'shoulder-mobility', 'active-mobility', 'desk-relief', 'home', 'no-equipment'],
   }),
 
@@ -465,7 +569,12 @@ export const REEL_EXERCISES: Exercise[] = [
   rex('DcGhVQSBEND', 'jeremyriesen', 'ig-mo-cross-body-squat', 'Cross-Body Squat', 'mobility',
     ['adductors', 'glutes'], ['quads', 'obliques'], [...BW], {
     difficulty: 2, loadType: 'reps',
-    cues: ['Squat and reach across the body, letting the hips rotate under you'],
+    cues: [
+      'Squat down and reach one hand across the body towards the opposite foot',
+      'Let the hips rotate under you rather than keeping them locked',
+      'Come up and repeat to the other side',
+      'A rotational warm-up, so keep it light and flowing',
+    ],
     tags: ['wake', 'hip-mobility', 'active-mobility', 'home', 'no-equipment'],
   }),
 
@@ -517,7 +626,12 @@ export const REEL_EXERCISES: Exercise[] = [
   rex('Db0lgeONXI3', 'reikovanwees', 'ig-mo-foam-roll-itb', 'Foam Roll Outer Thigh', 'stretch',
     ['quads'], ['abductors'], ['mat'], {
     unilateral: true, difficulty: 1, loadType: 'time',
-    cues: ['Roll the outer thigh slowly, pausing where it is tender rather than grinding through'],
+    cues: [
+      'Roll the outer thigh slowly, hip to just above the knee',
+      'When you find a tender spot, stop on it and breathe rather than grinding past it',
+      'Do not roll directly over the knee or the hip bone',
+      'A minute a side is plenty',
+    ],
     notes: 'Creator targets the IT band and surrounding fascia for outer knee pain.',
     tags: ['recovery', 'run', 'rehab', 'home'],
   }),
@@ -575,7 +689,12 @@ export const REEL_EXERCISES: Exercise[] = [
   rex('DcGbZ7zqCWc', 'davidp.fitt', 'ig-co-russian-twist', 'Russian Twist', 'core-anti-rotation',
     ['obliques'], ['abs', 'hip-flexors'], [...BW], {
     difficulty: 1, loadType: 'time',
-    cues: ['Sit back to the point of tension, rotate the ribcage rather than just swinging the arms'],
+    cues: [
+      'Sit leaning back with a long spine, feet down or hovering',
+      'Rotate from the ribs and let the eyes follow the hands',
+      'The hips stay reasonably still — waving the arms while the trunk stays put does nothing',
+      'Slow beats fast; this is easy to fake',
+    ],
     tags: ['core', 'home', 'no-equipment'],
   }),
 
@@ -589,7 +708,12 @@ export const REEL_EXERCISES: Exercise[] = [
   rex('DcGbZ7zqCWc', 'davidp.fitt', 'ig-co-v-up', 'V-Up / Toe Touch', 'core-flexion',
     ['abs'], ['hip-flexors', 'obliques'], [...BW], {
     difficulty: 2, loadType: 'reps',
-    cues: ['Reach hands to feet, folding at the hips, then lower both under control'],
+    cues: [
+      'Start long, arms overhead and legs straight',
+      'Fold at the hips so the hands and feet meet above your middle',
+      'Lower back stays down as you start the movement',
+      'Bend the knees if the back lifts — a tucked V-up is a real exercise',
+    ],
     tags: ['core', 'home', 'no-equipment'],
   }),
 
@@ -610,7 +734,12 @@ export const REEL_EXERCISES: Exercise[] = [
   rex('Dblo2_KInQb', 'calisthenicspablo', 'ig-ph-knee-pushup', 'Knee Push-Up', 'push-horizontal',
     ['chest'], ['triceps', 'front-delts'], [...BW], {
     difficulty: 1, loadType: 'reps',
-    cues: ['Knees down but hips still in line with the shoulders — do not pike up'],
+    cues: [
+      'Knees under the hips, but the line from knees to head stays straight',
+      'Same elbow path as a full push-up — back, not flared',
+      'Chest to the floor; the shortened lever is the only difference',
+      'Move to feet as soon as you can do twelve of these cleanly',
+    ],
     tags: ['home', 'no-equipment', 'beginner-friendly', 'travel'],
   }),
 
@@ -624,14 +753,24 @@ export const REEL_EXERCISES: Exercise[] = [
   rex('Dblo2_KInQb', 'calisthenicspablo', 'ig-ph-wall-pushup', 'Wall Push-Up', 'push-horizontal',
     ['chest'], ['triceps', 'front-delts'], [...BW], {
     difficulty: 1, loadType: 'reps',
-    cues: ['The regression before knee push-ups — step further back to make it harder'],
+    cues: [
+      'Hands on the wall at chest height, feet back far enough to lean',
+      'The further your feet, the harder it is — this is the dial',
+      'Body stays in one line; do not pike at the hips',
+      'The best starting point if a knee push-up is still too much',
+    ],
     tags: ['home', 'no-equipment', 'beginner-friendly', 'travel', 'rehab'],
   }),
 
   rex('Dblo2_KInQb', 'calisthenicspablo', 'ig-ph-diamond-pushup', 'Diamond Push-Up', 'push-horizontal',
     ['triceps'], ['chest', 'front-delts'], [...BW], {
     difficulty: 2, loadType: 'reps',
-    cues: ['Hands together under the chest, elbows tracking back rather than flaring'],
+    cues: [
+      'Hands together under the chest, index fingers and thumbs touching',
+      'Elbows track back along the ribs, not out to the sides',
+      'The narrow base puts this on the triceps far more than a normal push-up',
+      'Wrists complain here first — come out of it rather than pushing through',
+    ],
     tags: ['home', 'no-equipment', 'travel'],
   }),
 
@@ -657,7 +796,12 @@ export const REEL_EXERCISES: Exercise[] = [
   rex('DWUHXzllOFt', 'builtbrody', 'ig-is-front-raise', 'Dumbbell Front Raise', 'isolation',
     ['front-delts'], ['side-delts'], ['dumbbell'], {
     difficulty: 1, loadType: 'weight-reps',
-    cues: ['Raise to shoulder height, no higher, and stop the torso swinging'],
+    cues: [
+      'Lift to shoulder height and no further — past that the traps take over',
+      'Elbow soft and fixed; do not turn it into a swinging press',
+      'Ribs down and no leaning back to launch the weight',
+      'Lower slowly; the way down is most of the work',
+    ],
     notes: 'From a physique guide listing four options per delt head; 2-3 sets of 8-12 recommended.',
     tags: ['shoulder'],
   }),
@@ -672,28 +816,48 @@ export const REEL_EXERCISES: Exercise[] = [
   rex('DWUHXzllOFt', 'builtbrody', 'ig-pu-reverse-grip-pulldown', 'Reverse Grip Pulldown', 'pull-vertical',
     ['lats'], ['biceps', 'upper-back'], ['machine'], {
     difficulty: 1, loadType: 'weight-reps',
-    cues: ['Underhand grip drives the elbows down and back — the creator’s pick for lower lats'],
+    cues: [
+      'Underhand grip, hands about shoulder width',
+      'Elbows stay close to the ribs and drive straight down',
+      'Pull to the upper chest, then control the whole way back up',
+      'Biases the lower lats and gives the biceps more to do than an overhand grip',
+    ],
     tags: [],
   }),
 
   rex('DWUHXzllOFt', 'builtbrody', 'ig-ph-low-high-fly', 'Low to High Cable Fly', 'push-horizontal',
     ['chest'], ['front-delts'], ['cable'], {
     difficulty: 1, loadType: 'weight-reps',
-    cues: ['Sweep up and in, finishing with the hands high — biases the upper chest'],
+    cues: [
+      'Cables set low, sweeping up and in towards the collarbones',
+      'Fixed soft elbow throughout — this is a fly, not a press',
+      'Finish with the hands together and high, chest squeezed',
+      'Do not shrug at the top; keep the shoulders down',
+    ],
     tags: [],
   }),
 
   rex('DWUHXzllOFt', 'builtbrody', 'ig-ph-pec-deck', 'Pec Deck Fly', 'push-horizontal',
     ['chest'], ['front-delts'], ['machine'], {
     difficulty: 1, loadType: 'weight-reps',
-    cues: ['Elbows slightly soft and fixed; the movement happens at the shoulder, not the elbow'],
+    cues: [
+      'Set the seat so the handles are at chest height',
+      'Shoulders stay back against the pad as the arms close',
+      'Squeeze and hold for a beat where the pads meet',
+      'Control the way back; the stretch is worth as much as the squeeze',
+    ],
     tags: [],
   }),
 
   rex('DWUHXzllOFt', 'builtbrody', 'ig-ph-decline-press', 'Decline Bench Press', 'push-horizontal',
     ['chest'], ['triceps', 'front-delts'], ['barbell', 'bench'], {
     difficulty: 2, loadType: 'weight-reps',
-    cues: ['Biases the lower chest; keep the same tight shoulder position as a flat press'],
+    cues: [
+      'Feet locked in first — a decline is not a place to lose your position',
+      'Bar to the lower chest, elbows tucked to about 45 degrees',
+      'Shorter range than a flat press, so it usually goes heavier',
+      'Have a spotter, or use dumbbells',
+    ],
     tags: [],
   }),
 
@@ -765,8 +929,10 @@ export const REEL_EXERCISES: Exercise[] = [
     ['glutes', 'hamstrings'], ['abs', 'front-delts'], ['kettlebell'], {
     difficulty: 2, loadType: 'weight-reps',
     cues: [
-      'Same hip snap as a regular swing, but the bell floats to overhead rather than shoulder height',
-      'The arms never lift the bell — if they do, the hips were too slow',
+      'The hips throw it, the arms just hang on — same snap as a normal swing',
+      'It floats to eye level or above; you are not lifting it there with the shoulders',
+      'Snap the glutes at the top and let the bell come back down into the hinge',
+      'Shoulders stay packed down as the bell rises',
     ],
     notes: 'Opens a six-movement complex: high swings, cleans, presses, lunges, squats, rows.',
     tags: ['kettlebell', 'conditioning'],
@@ -966,9 +1132,10 @@ export const REEL_EXERCISES: Exercise[] = [
     ['obliques', 'abs'], ['front-delts', 'glutes'], ['kettlebell'], {
     unilateral: true, difficulty: 2, loadType: 'reps',
     cues: [
-      'Half-kneeling, drive the bell diagonally from high on one side to low on the other',
-      'The hips stay square and still — the chop is resisted rotation, not a twist',
-      'Creator programmes 3 × 20 per side',
+      'Half-kneeling, driving the bell diagonally from low on one side to high on the other',
+      'The hips stay square to the front — only the ribs rotate',
+      'Half-kneeling exists to stop you cheating with the hips, so do not let them turn',
+      'Control it back down the same path',
     ],
     notes: 'From a "forget sit-ups, do these instead" set. Movement names were shown on screen.',
     tags: ['kettlebell', 'core', 'anti-rotation'],
@@ -978,9 +1145,10 @@ export const REEL_EXERCISES: Exercise[] = [
     ['abs', 'obliques'], ['front-delts', 'quads'], ['kettlebell'], {
     unilateral: true, difficulty: 2, loadType: 'reps',
     cues: [
-      'Bear position with the knees hovering, pass a kettlebell under your body hand to hand',
-      'Hips level throughout — the bell moving under you is trying to make you rotate, and you refuse',
-      '3 × 20 alternating',
+      'Bear position with the knees an inch off the floor and the hips level',
+      'Pass the bell under your chest from one hand to the other',
+      'The hips must not rock as the hand leaves the floor — that is the whole drill',
+      'Knees stay behind the hips, not under them',
     ],
     tags: ['kettlebell', 'core', 'home', 'anti-rotation'],
   }),
@@ -989,9 +1157,10 @@ export const REEL_EXERCISES: Exercise[] = [
     ['abs', 'obliques'], ['front-delts', 'lats'], ['kettlebell'], {
     unilateral: true, difficulty: 3, loadType: 'reps',
     cues: [
-      'High plank with straight legs, drag a kettlebell under the body from one hand to the other',
-      'Widen the feet to steady yourself; the hips must not tip as the weight crosses',
-      'Harder than the bear-position version because the legs are long — longer lever, more rotation to resist',
+      'High plank with the feet wide for a stable base',
+      'Drag the bell under your body with one hand and set it down on the other side',
+      'Hips stay square and level; do not twist to reach it',
+      'Reset the plank fully before the next pull',
     ],
     notes: 'One of four in a German kettlebell core set; the movement names were captioned on screen.',
     tags: ['kettlebell', 'core', 'anti-rotation', 'home'],
@@ -1131,9 +1300,11 @@ export const REEL_EXERCISES: Exercise[] = [
     ['lats', 'upper-back'], ['biceps', 'forearms', 'lower-back'], ['kettlebell'], {
     unilateral: true, difficulty: 2, loadType: 'weight-reps',
     cues: [
-      'Two bells on the floor between wide feet, hinge over and row them alternately',
-      'The free hand stays braced on the other bell — that is what lets you stay hinged and heavy',
-      'Grip is usually the limiter, which is the point',
+      'Two bells on the floor between wide feet, hinge over until the chest is above them',
+      'Drive the elbow BACK to your hip — do not pull the bell up to your chest',
+      'The bell on the floor stays there and takes your balance',
+      'Hips level: the working side must not hitch up as you row',
+      'No momentum. If it needs a heave, use a lighter bell',
     ],
     notes: 'From a competitive swimmer\'s strength session, posted under an ironic "exercises I\'d never do" framing.',
     tags: ['kettlebell', 'swim', 'grip'],
@@ -1417,8 +1588,9 @@ export const REEL_EXERCISES: Exercise[] = [
     unilateral: true, difficulty: 2, loadType: 'weight-reps',
     cues: [
       'Wide stance, hinged over, one bell on the floor between the feet',
-      'Pull it up and out with the elbow driving high and wide rather than tucking to the hip — that is what shifts it from lats to upper back and rear delts',
-      'Alternate sides continuously; the hinge holds still while the arms swap',
+      'The hips start it: snap them, then let the elbow rise high and outside',
+      'The pull finishes at chest height with the elbow above the wrist',
+      'Do not pull with the arm before the hips have finished',
     ],
     notes: 'The creator uses full-body drills like this in place of isolated arm sessions, at about ten minutes a day.',
     tags: ['kettlebell', 'home', 'conditioning'],
@@ -1476,9 +1648,10 @@ export const REEL_EXERCISES: Exercise[] = [
     ['quads', 'glutes'], ['front-delts', 'triceps', 'abs', 'forearms'], ['kettlebell'], {
     difficulty: 3, loadType: 'reps',
     cues: [
-      'Two bells on the floor between the feet, sit into a deep squat and clean them to the rack',
-      'Stay low and press overhead from the squat rather than standing up between reps — that is what makes it the whole workout',
-      'Twenty minutes at a pace you can hold; grip usually decides when you stop',
+      'Two bells between the feet, sit into a deep squat to grip them',
+      'Clean both to the rack in one movement, keeping them close to the body',
+      'Stand fully before you press — the squat and the press do not overlap',
+      'Vertical forearms in the rack, wrists firm and straight',
     ],
     notes: 'The creator\'s pitch is one movement covering legs, glutes, core, arms, shoulders and grip, trained as cardio, strength and conditioning at once. Same philosophy as their Shelf Loader, with two bells and a lower position.',
     tags: ['kettlebell', 'conditioning', 'home', 'travel', 'finisher'],
