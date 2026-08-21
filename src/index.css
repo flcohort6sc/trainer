@@ -55,6 +55,13 @@
   /* --- type ------------------------------------------------------------ */
   --display: 'Futura', 'Avenir Next Condensed', 'Gill Sans', sans-serif;
   --body: 'Avenir Next', 'Avenir', 'Optima', sans-serif;
+  /*
+    The tab bar's height, as a number the rest of the layout can do arithmetic
+    with. It used to be implicit -- the bar was whatever its contents came to
+    (61px) while .sticky-actions guessed 72px, so the primary action floated
+    11px above the bar and a slit of card text showed through the gap.
+  */
+  --tabbar-h: 61px;
   --numeral: 'Menlo', ui-monospace, 'SF Mono', monospace;
 
   color-scheme: dark;
@@ -227,7 +234,7 @@ h3 {
   /* Top clears .top-scrim (56px) so nothing starts life under the button. */
   padding:
     calc(64px + env(safe-area-inset-top, 0px)) 16px
-    calc(96px + env(safe-area-inset-bottom, 0px));
+    calc(var(--tabbar-h) + 35px + env(safe-area-inset-bottom, 0px));
 }
 
 .tabbar {
@@ -243,6 +250,7 @@ h3 {
 }
 
 .tabbar-inner {
+  height: var(--tabbar-h);
   max-width: 720px;
   margin: 0 auto;
   display: flex;
@@ -827,15 +835,16 @@ textarea { min-height: 72px; resize: vertical; line-height: 1.5; }
 
 .sticky-actions {
   position: sticky;
-  /* Clear of the tab bar including the home indicator; 72px alone put the
-     primary action inside the bar on a real phone. */
-  bottom: calc(72px + env(safe-area-inset-bottom, 0px));
+  /* Flush with the top of the tab bar. Anything less puts the primary action
+     inside the bar; anything more opens a slit that scrolling text shows
+     through, which is what a 72px guess against a 61px bar did. */
+  bottom: calc(var(--tabbar-h) + env(safe-area-inset-bottom, 0px));
   background: var(--bg);
   padding: 8px 0;
   /* Its own height plus the tab bar, so the last set row is not sitting
      underneath it. Without this the bottom exercise of a session is unreachable
      -- which is the one you are logging when you are most tired. */
-  margin: 8px 0 calc(84px + env(safe-area-inset-bottom, 0px));
+  margin: 8px 0 calc(var(--tabbar-h) + 23px + env(safe-area-inset-bottom, 0px));
 }
 
 /* Fade the scrolling content out above the button instead of letting it show

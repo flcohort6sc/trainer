@@ -1340,12 +1340,16 @@ const padding = (appMain.match(/padding:[^;]*/s) ?? [''])[0]
 const [padTop, padBottom] = padding.split('16px')
 
 check('.app-main leaves room for the home indicator',
-  /calc\(\s*96px\s*\+\s*env\(safe-area-inset-bottom/.test(padBottom ?? ''),
-  padBottom?.trim().slice(0, 60))
+  /env\(safe-area-inset-bottom/.test(padBottom ?? ''), padBottom?.trim().slice(0, 60))
 check('.app-main leaves room for the status bar',
   /env\(safe-area-inset-top/.test(padTop ?? ''), padTop?.trim().slice(0, 60))
-check('the sticky action bar sits above the tab bar, indicator included',
-  /calc\(72px \+ env\(safe-area-inset-bottom/.test(ruleFor('.sticky-actions')))
+check('the sticky action bar sits flush on top of the tab bar',
+  /bottom: calc\(var\(--tabbar-h\) \+ env\(safe-area-inset-bottom/.test(ruleFor('.sticky-actions')),
+  'a slit between the two shows scrolling text through it')
+check('the tab bar is actually the height the rest of the layout assumes',
+  /height: var\(--tabbar-h\)/.test(ruleFor('.tabbar-inner')))
+check('the bottom padding derives from the bar rather than guessing at it',
+  /calc\(var\(--tabbar-h\) \+ 35px \+ env\(safe-area-inset-bottom/.test(appMain))
 
 const scrimHeight = firstNum((ruleFor('.top-scrim').match(/height:[^;]*/) ?? [''])[0])
 const buttonTop = firstNum((ruleFor('.settings-button').match(/top:[^;]*/) ?? [''])[0])
