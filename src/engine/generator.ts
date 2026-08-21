@@ -28,6 +28,8 @@ import { suggestLoad } from './progression'
  */
 export interface SlotFilter {
   patterns: MovementPattern[]
+  /** Present on a Slot, absent on a RoutineStep — routines are never metres. */
+  distanceRange?: [number, number]
   requireMuscles?: Muscle[]
   requireTags?: string[]
   excludeEquipment?: Equipment[]
@@ -221,6 +223,21 @@ export function eligibleFor(
     pool = pool.filter((e) => !sore.blocks(e))
     if (pool.length === 0) {
       return { pool: [], blockReason: `everything here is on hold while ${sore.describe()} is sore` }
+    }
+  }
+
+  /*
+   * A slot that prescribes a distance can only be filled by something measured
+   * in distance.
+   *
+   * Sculling was logged in seconds and sat in the swim pool, so "Drill A: 4 x
+   * 50m" could hand you an exercise whose logger asked for seconds. The card
+   * and the logger disagreed about what you were even doing.
+   */
+  if (slot.distanceRange) {
+    pool = pool.filter((e) => e.loadType === 'distance' || e.loadType === 'distance-time')
+    if (pool.length === 0) {
+      return { pool: [], blockReason: 'nothing here is measured in distance' }
     }
   }
 

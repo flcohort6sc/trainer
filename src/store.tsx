@@ -83,10 +83,12 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     update,
 
     addExercise: (e) => update((d) => ({ ...d, exercises: [...d.exercises, e] })),
+    // Editing an exercise makes its wording yours; the load-time reconcile
+    // will leave it alone from now on.
     updateExercise: (id, patch) =>
       update((d) => ({
         ...d,
-        exercises: d.exercises.map((e) => (e.id === id ? { ...e, ...patch } : e)),
+        exercises: d.exercises.map((e) => (e.id === id ? { ...e, ...patch, userEdited: true } : e)),
       })),
     // Archive rather than delete when there is history -- deleting would orphan
     // every logged set that references this exercise.

@@ -287,8 +287,13 @@ export const SEED_MOBILITY: Exercise[] = [
   }),
   ex('fx-jefferson-curl', 'Jefferson Curl', 'stretch', ['hamstrings'], ['lower-back'], ['bodyweight'], {
     difficulty: 3, loadType: 'time',
-    cues: ['Stand on a step, roll down one vertebra at a time, then rebuild from the bottom', 'Start with no weight at all and stay there for weeks'],
-    notes: 'Deliberately loads a rounded spine through a controlled range. Light, slow, or not at all.',
+    cues: [
+      'Stand on a step, chin to chest, and roll down one vertebra at a time',
+      'Rebuild from the bottom the same way — hips first, head last',
+      'Very light. A dumbbell you could curl is heavy enough here',
+      'Contested exercise: skip it if you sit all day or your lower back is grumbling',
+    ],
+    notes: 'This one is genuinely contested. It deliberately loads a rounded spine, and McGill\'s work argues the risk outweighs the benefit for most people who are not gymnasts — particularly if you already spend the day in flexion at a desk, which is most of us. It is in the library because loaded spinal flexion has a real case for building tolerance, not because the debate is settled. Light, slow, or not at all — and skip it entirely if your lower back is unhappy.',
     tags: ['flexibility', 'spine', ...HOME],
   }),
   ex('fx-lizard', 'Lizard Lunge', 'stretch', ['hip-flexors'], ['adductors'], ['bodyweight'], {

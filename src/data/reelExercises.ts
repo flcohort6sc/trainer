@@ -414,7 +414,7 @@ export const REEL_EXERCISES: Exercise[] = [
     ['calves'], ['quads'], [...BW], {
     difficulty: 1, loadType: 'time',
     cues: ['Small loose bounces on the spot, heels barely leaving the floor', 'Thirty seconds to raise circulation'],
-    notes: 'Creator’s framing is lymphatic circulation; treat that as their claim, not established fact.',
+    notes: 'The creator frames this as lymphatic circulation. Lymph does move through muscle contraction and movement, so gentle bouncing plausibly helps — but "lymphatic drainage" as marketed is a much bigger claim than the evidence supports. It is a pleasant, low-cost way to loosen up before a routine, which is reason enough. · From @domdavyfit',
     tags: ['wake', 'active-mobility', 'home', 'no-equipment'],
   }),
 
@@ -1028,7 +1028,7 @@ export const REEL_EXERCISES: Exercise[] = [
       'Slow reps — the creator repeats "slow" over the demonstration',
       'Targets gluteus medius, the hip stabiliser that sitting switches off',
     ],
-    notes: 'Creator\'s claim: gluteus medius weakens by up to 35% after eight hours of daily sitting. That figure is theirs and I have not verified it.',
+    notes: 'From a reel claiming the gluteus medius weakens by up to 35% after eight hours of sitting. The effect is real and well documented — prolonged sitting holds the glutes lengthened and inhibited, the thing physios call gluteal amnesia. The 35% is the creator’s number and I have found no source for it. Train the muscle; ignore the figure.',
     tags: ['rehab', 'hip-mobility', 'run', 'home', 'no-equipment', 'posture'],
   }),
 
@@ -1329,7 +1329,7 @@ export const REEL_EXERCISES: Exercise[] = [
       'Warm up properly first. A cold maximal sprint is one of the more reliable ways to tear a hamstring',
       'Full recovery between reps. If the fifth is much slower than the first, you rested too little',
     ],
-    notes: 'Creator\'s protocol: twice a week, about ten minutes. They also claim it beats an hour of cardio, raises testosterone and deepens sleep — those are their claims, not established findings. The training logic of short maximal efforts is sound regardless; it trains a speed quality that the 800m repeats in the Run program do not touch.',
+    notes: 'Creator’s protocol: twice a week, about ten minutes. They also claim it beats an hour of cardio, raises testosterone and deepens sleep. Sprinting is genuinely potent for a small time cost, and hard exercise does acutely shift hormones — but "beats an hour of cardio" depends entirely on what you are training for, and the testosterone effect is short-lived and much smaller than the framing suggests. Do it because it is efficient, not because of the hormone claim.',
     tags: ['run', 'intervals', 'conditioning', 'outdoors'],
   }),
 

@@ -209,6 +209,19 @@ wall balls and thrusters were 'squat', which let a heavy 4×5 slot serve 100 wal
 balls and halved the fatigue model's bias. They are conditioning; there is now a
 test that a heavy primary slot can never be filled with a conditioning station.
 
+## Content: how corrections reach the phone
+
+**`refreshShippedContent` runs on every load**, not in a migration. The library
+lives in localStorage, so a rewritten cue reached new installs only — and the
+one-off migration that fixed it once then stranded the *next* improvement,
+because the schema had already moved past it. Reconciling on load means every
+future correction arrives.
+
+It only touches ids the app shipped, and never an exercise you have edited:
+saving an edit in the Library sets `userEdited` and the reconcile skips it from
+then on. Your history, your own exercises and your rewording are yours; the
+app's copy is the app's.
+
 ## Instructions, checked
 
 Every exercise now carries **at least two instructions** and averages four; the
@@ -226,6 +239,22 @@ with no rest at the bottom.
 **Library → Bells** groups all 33 by what the movement is for — ballistic, press
 and pull, carry, brace and rotate — with a filter for what your current place
 can actually do.
+
+A second pass audited what the first never checked: muscle assignments against
+movement pattern, equipment against the exercise name, load type against the
+movement, and near-duplicate names. 353 exercises produced **8 flags, 6 of them
+my audit rule being wrong** — a Copenhagen Plank's primary really is the
+adductors, and "Box Breathing" is not a box.
+
+The two real ones were the same defect: **a slot prescribing "4 × 50m" could be
+filled by a drill logged in seconds**, so the card and the logger disagreed
+about what you were doing. Fixed at the class level — a distance slot now only
+serves distance-measured work — with `[C8]` checking all 21 distance slots.
+
+The Jefferson Curl carries a warning now. It is genuinely contested: McGill's
+work argues the risk outweighs the benefit for most non-gymnasts, and
+especially for people who already spend the day in flexion. It stays in the
+library, and it says so on the card.
 
 `[F5]` checks every figure mechanically: no joint outside a human range, and no
 sideways movement drawn from an angle that hides it. Four were wrong and are

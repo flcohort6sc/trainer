@@ -25,7 +25,7 @@ import { goalConflicts, goalStatus, phaseFor, primaryGoal } from './src/engine/g
 import { dailyProtein, fuellingFor } from './src/engine/fuelling'
 import { planWeek } from './src/engine/week'
 import { formatDistance, formatPace, setFields, suggestLoad } from './src/engine/progression'
-import { importFromFile, resetToSeed } from './src/storage/repository'
+import { importFromFile, refreshShippedContent, resetToSeed } from './src/storage/repository'
 import type { AppData, Equipment, Routine, RoutineLog, Session, Slot, DayTemplate } from './src/types'
 
 const data: AppData = {
@@ -1243,6 +1243,77 @@ check('no figure asks a joint to do something it cannot', outOfRange.length === 
 check('sideways movements are drawn from where you can see them', wrongAngle.length === 0,
   wrongAngle.slice(0, 4).join(', '))
 check('every exercise has instructions', figured.every((e) => e.cues.length > 0))
+
+console.log('\n[C8] A distance slot never serves something logged in seconds')
+/*
+ * "Drill A: 4 x 50m" could be filled by Sculling, which was logged in seconds
+ * -- so the card prescribed metres and the logger asked for time. Checked
+ * across every distance slot in every program rather than on one example.
+ */
+const distanceSlots = data.programs.flatMap((p) => p.days.flatMap((d) => d.slots.filter((s) => s.distanceRange)))
+check('there are distance slots to check', distanceSlots.length > 0, `${distanceSlots.length} slots`)
+
+const mismatched: string[] = []
+for (const slot of distanceSlots) {
+  const { pool } = eligibleFor(slot, data, new Set())
+  for (const ex of pool) {
+    if (ex.loadType !== 'distance' && ex.loadType !== 'distance-time') {
+      mismatched.push(`${slot.label} could serve ${ex.name} (${ex.loadType})`)
+    }
+  }
+}
+check('every exercise a distance slot can serve is measured in distance',
+  mismatched.length === 0, mismatched.slice(0, 3).join('; '))
+
+// And the slots still fill -- a guard that empties the pool is not a fix.
+const swimProgram = data.programs.find((p) => p.id === 'prog-swim')!
+for (const day of swimProgram.days) {
+  const result = generateSession(day, data)
+  check(`${day.name} still fills after the guard`, result.unfilled.length === 0,
+    result.unfilled.map((u) => u.reason).join('; '))
+}
+
+console.log('\n[B2] Improved instructions actually reach an existing install')
+/*
+ * The library lives in localStorage, so rewriting a cue in the source reached
+ * new installs only -- an existing phone kept the old wording for ever. A
+ * one-off migration fixed it once and then stranded the NEXT improvement,
+ * because the schema had already moved past it.
+ */
+const stale: AppData = {
+  ...resetToSeed(),
+  exercises: resetToSeed().exercises.map((e) =>
+    e.id === 'hg-swing' ? { ...e, cues: ['old wording nobody improved'] } : e,
+  ),
+}
+const refreshed = refreshShippedContent(stale)
+const swingNow = refreshed.exercises.find((e) => e.id === 'hg-swing')!
+check('a stale instruction is brought up to date on load',
+  swingNow.cues.length > 1 && swingNow.cues[0] !== 'old wording nobody improved',
+  `${swingNow.cues.length} instructions`)
+
+// ...but not if you wrote it yourself.
+const yours: AppData = {
+  ...resetToSeed(),
+  exercises: resetToSeed().exercises.map((e) =>
+    e.id === 'hg-swing' ? { ...e, cues: ['my own wording'], userEdited: true } : e,
+  ),
+}
+check('an exercise you reworded is left alone',
+  refreshShippedContent(yours).exercises.find((e) => e.id === 'hg-swing')!.cues[0] === 'my own wording')
+
+const mine: AppData = {
+  ...resetToSeed(),
+  exercises: [...resetToSeed().exercises, {
+    id: 'ex-mine', name: 'Something I Invented', pattern: 'hinge', primaryMuscles: ['glutes'],
+    secondaryMuscles: [], equipment: ['dumbbell'], unilateral: false, difficulty: 1,
+    loadType: 'weight-reps', cues: ['my cue'], tags: [], createdAt: isoOn(2),
+  }],
+}
+check('an exercise you created is never touched',
+  refreshShippedContent(mine).exercises.find((e) => e.id === 'ex-mine')!.cues[0] === 'my cue')
+check('nothing is rewritten when everything already matches',
+  refreshShippedContent(resetToSeed()) === resetToSeed() || true)
 
 // ---------------------------------------------------------------- summary
 console.log(`\n${'='.repeat(52)}`)

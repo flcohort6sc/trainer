@@ -289,6 +289,35 @@ const MIGRATIONS: Record<number, (d: AppData) => AppData> = {
   },
 }
 
+/**
+ * Bring the app's own written content up to date, every load.
+ *
+ * The library lives in localStorage, so a rewritten cue reached new installs
+ * only. A one-off migration fixed that once and then stranded the next
+ * improvement, because the schema was already past it — so this runs every
+ * time instead.
+ *
+ * It only ever touches ids the app shipped, and never an exercise you have
+ * edited. Your logged history, your own exercises, and anything you reworded
+ * are all untouched: this is the difference between the app's copy and your
+ * data.
+ */
+export function refreshShippedContent(data: AppData): AppData {
+  const shipped = new Map(ALL_SEED_EXERCISES.map((e) => [e.id, e]))
+  let changed = 0
+
+  const exercises = data.exercises.map((e) => {
+    const seed = shipped.get(e.id)
+    if (!seed || e.userEdited) return e
+    const sameCues = e.cues.length === seed.cues.length && e.cues.every((c, i) => c === seed.cues[i])
+    if (sameCues && e.notes === seed.notes) return e
+    changed++
+    return { ...e, cues: seed.cues, notes: seed.notes ?? e.notes }
+  })
+
+  return changed === 0 ? data : { ...data, exercises }
+}
+
 export function load(): AppData {
   try {
     const raw = localStorage.getItem(STORAGE_KEY)
@@ -306,7 +335,7 @@ export function load(): AppData {
     // Defensive: merge in any settings keys added since this data was saved.
     data.settings = { ...DEFAULT_SETTINGS, ...data.settings }
     data.goals = data.goals ?? []
-    return data
+    return refreshShippedContent(data)
   } catch (err) {
     console.error('Could not read saved data, starting fresh:', err)
     return freshData()

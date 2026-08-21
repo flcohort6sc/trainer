@@ -111,6 +111,15 @@ export interface Exercise {
   /** Link back to the reel / video it came from. */
   sourceUrl?: string
   notes?: string
+  /**
+   * You edited this one, so the app stops overwriting its written content.
+   *
+   * Instructions on exercises the app ships are app content, not your data, and
+   * they are reconciled from the seed files on every load — otherwise improving
+   * a cue only ever reaches new installs. This flag is the opt-out, set the
+   * moment you save an edit.
+   */
+  userEdited?: boolean
   /** Free-form: 'warmup', 'finisher', 'knee-friendly', 'travel'... */
   tags: string[]
   createdAt: string

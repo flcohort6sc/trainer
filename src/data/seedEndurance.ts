@@ -73,7 +73,7 @@ export const SEED_ENDURANCE: Exercise[] = [
     tags: ['swim', 'drill', 'technique'],
   }),
   ex('sw-sculling', 'Sculling', 'swim', ['forearms'], ['lats', 'chest'], [...POOL], {
-    difficulty: 2, loadType: 'time',
+    difficulty: 2, loadType: 'distance-time',
     cues: ['Small figure-eight sweeps with the hands, elbows high', 'You are learning what "holding water" feels like'],
     tags: ['swim', 'drill', 'technique'],
   }),
