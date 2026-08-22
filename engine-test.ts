@@ -1365,6 +1365,34 @@ check('both grow by the same inset, so the gap holds on any device',
   /env\(safe-area-inset-top/.test(ruleFor('.top-scrim')) &&
   /env\(safe-area-inset-top/.test(ruleFor('.settings-button')))
 
+// ------------------------------------------------- [U2] the get-ready screen
+/*
+  A work segment shows a name, a ring and a cue. The get-ready segment shows all
+  of that PLUS the figure, which is ~200px more on a screen that has 444 of them
+  on a 667px phone. It did not fit, and because .flow-body centres its children
+  the overflow went out BOTH ends: the name over the Stop button, the cue behind
+  the Pause button. The cue is the text that tells you how to do the movement,
+  so it is the last thing that should fall off.
+*/
+console.log('\n[U2] Get-ready fits the picture AND the instructions')
+
+const flowBody = ruleFor('.flow-body')
+check('the flow body top-aligns rather than centring its own overflow',
+  /justify-content: safe center/.test(flowBody),
+  'plain `center` strands the first child above the top edge')
+check('the flow body can never paint over the controls',
+  /overflow-y: auto/.test(flowBody))
+
+const readyRing = firstNum((ruleFor('.flow-ring.is-ready').match(/width:[^;]*/) ?? [''])[0])
+const workRing = firstNum((ruleFor('.flow-ring').match(/width:[^;]*/) ?? [''])[0])
+check('the countdown gives up space during get-ready',
+  readyRing > 0 && readyRing < workRing, `${readyRing}px ready vs ${workRing}px working`)
+check('the figure scales with the screen instead of pushing text off it',
+  /height: min\(\d+px, \d+vh\)/.test(ruleFor('.flow .exercise-figure svg')),
+  'a fixed height overflows the short phones')
+check('the name shrinks when the figure is on screen too',
+  /font-size/.test(ruleFor('.flow.is-ready .flow-name')))
+
 // ---------------------------------------------------------------- summary
 console.log(`\n${'='.repeat(52)}`)
 console.log(`${pass} passed, ${fail} failed`)

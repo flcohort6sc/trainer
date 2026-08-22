@@ -1000,7 +1000,17 @@ a { color: var(--accent); }
   display: flex;
   flex-direction: column;
   align-items: center;
+  /*
+    Centred while it fits, top-aligned once it does not. Plain `center` centres
+    the overflow too, which pushed the exercise name up over the Stop button and
+    the cue down behind the Pause button -- both unreadable, and the cue is the
+    text telling you how to do the movement. `safe` is ignored by browsers that
+    do not know it, so the plain value stays as the fallback.
+  */
   justify-content: center;
+  justify-content: safe center;
+  overflow-y: auto;
+  overscroll-behavior: contain;
   text-align: center;
   gap: 6px;
   min-height: 0;
@@ -1053,6 +1063,34 @@ a { color: var(--accent); }
 }
 
 .ring-fill.is-ready { stroke: var(--warn); }
+
+/*
+  Get-ready shows the figure as well as everything else, which is ~250px more
+  than a work segment. The countdown there is 3-2-1 and does not need to be the
+  biggest thing on screen, so the ring is what gives the space back.
+*/
+.flow-ring.is-ready {
+  width: 76px;
+  height: 76px;
+  margin: 2px 0;
+}
+.flow-ring.is-ready svg { width: 76px; height: 76px; }
+.flow-ring.is-ready .flow-count { font-size: 24px; }
+
+/*
+  Everything below is the get-ready screen earning its space on a 667px phone.
+  It has to hold a name, a picture, the cue and a countdown at once -- a work
+  segment holds none of the picture -- and when it did not fit, the cue was the
+  thing that fell off the bottom. Which is backwards: the cue is the only part
+  that tells you how to do the movement.
+*/
+.flow.is-ready .flow-name { font-size: 21px; }
+
+/* The picture scales with the screen instead of pushing the text off it. */
+.flow .exercise-figure svg { height: min(170px, 19vh); width: auto; }
+
+/* The muscle chips stay: scaling the figure by viewport height bought enough
+   room for them and the cue both. */
 
 .flow-count {
   position: absolute;
@@ -1316,7 +1354,8 @@ a { color: var(--accent); }
 
 /* In the flow player the figure sits on the page background, not a card. */
 .flow .exercise-figure { background: none; padding: 0; margin: 0; }
-.flow .exercise-figure figcaption { display: none; }
+.flow .exercise-figure figcaption,
+.flow .exercise-figure .fig-hint { display: none; }
 .flow .fig-muscles {
   display: flex;
   flex-wrap: wrap;

@@ -260,7 +260,7 @@ export default function Flow({
   const CIRCUMFERENCE = 2 * Math.PI * R
 
   return (
-    <div className="flow">
+    <div className={`flow${isReady ? ' is-ready' : ''}`}>
       <div className="flow-top">
         <button className="btn btn-sm" onClick={onExit}>✕ Stop</button>
         <span className="faint">
@@ -281,7 +281,7 @@ export default function Flow({
           <Figure
             spec={figureFor(drill.exercise)!}
             title={drill.exercise.name}
-            size={150}
+            size={120}
             primaryMuscles={drill.exercise.primaryMuscles}
             secondaryMuscles={drill.exercise.secondaryMuscles}
           />
@@ -291,7 +291,7 @@ export default function Flow({
           <p className="flow-side">{segment.side === 1 ? 'First side' : '↻ Switch sides'}</p>
         )}
 
-        <div className="flow-ring">
+        <div className={`flow-ring${isReady ? ' is-ready' : ''}`}>
           <svg viewBox="0 0 200 200" width="200" height="200" aria-hidden="true">
             <circle cx="100" cy="100" r={R} className="ring-track" />
             <circle
